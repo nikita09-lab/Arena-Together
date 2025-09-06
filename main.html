@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Playoff - Two Player Arena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #4C5DD7 0%, #6366f1 50%, #8b5cf6 100%);
+            color: #2E2E2E;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: transparent;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Animated Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 40%, rgba(0, 191, 255, 0.03) 50%, transparent 60%),
+                linear-gradient(-45deg, transparent 40%, rgba(50, 205, 50, 0.03) 50%, transparent 60%);
+            background-size: 60px 60px;
+            animation: slidePattern 20s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes slidePattern {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(60px) translateY(60px); }
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2E2E2E 0%, #4682B4 100%);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #00BFFF;
+            text-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .tagline {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.8rem;
+            color: #32CD32;
+            text-shadow: 0 0 10px rgba(50, 205, 50, 0.5);
+        }
+        
+        /* Player Score Panel */
+        .score-panel {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: #2E2E2E;
+            margin: 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .player-score {
+            background: linear-gradient(135deg, #00BFFF, #4682B4);
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+            border: 2px solid #32CD32;
+        }
+        
+        .player-score.player2 {
+            background: linear-gradient(135deg, #32CD32, #008080);
+            box-shadow: 0 0 20px rgba(50, 205, 50, 0.3);
+            border: 2px solid #00BFFF;
+        }
+        
+        .player-name {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .score-number {
+            font-size: 2rem;
+            text-align: center;
+        }
+        
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #FFA500, #FF6347);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+            display: none;
+            z-index: 1000;
+            border: 2px solid #2E2E2E;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.5);
+        }
+        
+        /* Game Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .game-card {
+            background: #FFFFFF;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #D1D9E6;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .game-card:hover::before {
+            left: 100%;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.3);
+            border-color: #00BFFF;
+        }
+        
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.3));
+        }
+        
+        .game-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2E2E2E;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .game-description {
+            font-size: 0.95rem;
+            color: #708090;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .game-features {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .feature-tag {
+            background: linear-gradient(135deg, #00BFFF, #32CD32);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Game Pages */
+        .game-page {
+            display: none;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(135deg, #4C5DD7 0%, #6366f1 50%, #8b5cf6 100%);
+            min-height: 100vh;
+        }
+        
+        .home-page {
+            display: block;
+        }
+        
+        .game-header {
+            background: linear-gradient(135deg, #2E2E2E, #4682B4);
+            padding: 25px;
+            text-align: center;
+            color: white;
+        }
+        
+        .game-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            text-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+        }
+        
+        .game-header p {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7rem;
+            color: #32CD32;
+        }
+        
+        /* Memory Game Styles */
+        .memory-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #4682B4, #00BFFF);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #2E2E2E;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .memory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.4);
+        }
+        
+        .memory-card.flipped {
+            background: white;
+            border-color: #32CD32;
+            box-shadow: 0 0 20px rgba(50, 205, 50, 0.5);
+        }
+        
+        .memory-card.matched {
+            background: linear-gradient(135deg, #32CD32, #008080);
+            animation: matchGlow 0.6s ease;
+        }
+        
+        @keyframes matchGlow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(50, 205, 50, 0.8); }
+        }
+        
+        /* Tic Tac Toe Styles */
+        .ttt-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .ttt-cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #4682B4, #708090);
+            border: none;
+            border-radius: 12px;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #2E2E2E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ttt-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(70, 130, 180, 0.4);
+        }
+        
+        .ttt-cell.x {
+            background: linear-gradient(135deg, #00BFFF, #4682B4);
+            color: white;
+        }
+        
+        .ttt-cell.o {
+            background: linear-gradient(135deg, #32CD32, #008080);
+            color: white;
+        }
+        
+        /* Word Puzzle Styles */
+        .word-display {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 30px 0;
+            color: #00BFFF;
+            letter-spacing: 8px;
+            text-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+        }
+        
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .letter-btn {
+            padding: 15px;
+            background: linear-gradient(135deg, #4682B4, #708090);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #2E2E2E;
+        }
+        
+        .letter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(70, 130, 180, 0.4);
+        }
+        
+        .letter-btn:disabled {
+            background: #708090;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.5;
+        }
+        
+        .letter-btn.correct {
+            background: linear-gradient(135deg, #32CD32, #008080);
+            box-shadow: 0 0 20px rgba(50, 205, 50, 0.5);
+        }
+        
+        .letter-btn.incorrect {
+            background: linear-gradient(135deg, #FFA500, #FF6347);
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
+        }
+        
+        /* Rock Paper Scissors Styles */
+        .rps-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .players-area {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .player-choice {
+            text-align: center;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 3px solid #00BFFF;
+        }
+        
+        .player-choice h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: #2E2E2E;
+            margin-bottom: 15px;
+        }
+        
+        .choice-display {
+            font-size: 4rem;
+            margin: 20px 0;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .choice-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .rps-btn {
+            font-size: 2rem;
+            padding: 15px;
+            background: linear-gradient(135deg, #4682B4, #708090);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #2E2E2E;
+        }
+        
+        .rps-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(70, 130, 180, 0.4);
+        }
+        
+        .rps-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .vs-divider {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00BFFF;
+            text-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+        }
+        
+        .round-result {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #32CD32;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2E2E2E;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Draw & Guess Styles */
+        .draw-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .canvas-area {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        #drawCanvas {
+            border: 4px solid #00BFFF;
+            border-radius: 15px;
+            background: white;
+            cursor: crosshair;
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.3);
+        }
+        
+        .drawing-tools {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .tool-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #2E2E2E;
+        }
+        
+        .clear-btn {
+            background: linear-gradient(135deg, #FFA500, #FF6347);
+            color: white;
+        }
+        
+        .color-picker {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid #2E2E2E;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .color-picker:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Game Controls */
+        .game-controls {
+            text-align: center;
+            padding: 25px;
+            background: #2E2E2E;
+        }
+        
+        .control-btn {
+            background: linear-gradient(135deg, #00BFFF, #4682B4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            border: 2px solid #32CD32;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.5);
+        }
+        
+        .control-btn.secondary {
+            background: linear-gradient(135deg, #32CD32, #008080);
+            border-color: #00BFFF;
+        }
+        
+        /* Game Status */
+        .game-status {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            margin: 0 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #32CD32;
+        }
+        
+        .status-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2E2E2E;
+            margin-bottom: 10px;
+        }
+        
+        .turn-indicator {
+            font-size: 1rem;
+            color: #708090;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 0.6rem;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .memory-board {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .alphabet-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            #drawCanvas {
+                width: 100%;
+                max-width: 350px;
+                height: 250px;
+            }
+            
+            .players-area {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .vs-divider {
+                order: 2;
+                font-size: 1.5rem;
+            }
+            
+            .choice-buttons {
+                flex-wrap: wrap;
+            }
+        }
+        
+        /* Win Animation */
+        .win-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .win-message {
+            background: linear-gradient(135deg, #32CD32, #00BFFF);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            box-shadow: 0 0 50px rgba(50, 205, 50, 0.8);
+            animation: celebrationPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes celebrationPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <button class="back-btn" onclick="goHome()">◀ BACK</button>
+    
+    <div class="container">
+        <!-- HOME PAGE -->
+        <div id="homePage" class="home-page">
+            <div class="header">
+                <div class="logo">PIXEL PLAYOFF</div>
+                <div class="tagline">TWO PLAYER ARENA</div>
+            </div>
+            
+            <div class="score-panel">
+                <div class="player-score">
+                    <div class="player-name">PLAYER 1</div>
+                    <div class="score-number" id="player1Score">0</div>
+                </div>
+                <div class="player-score player2">
+                    <div class="player-name">PLAYER 2</div>
+                    <div class="score-number" id="player2Score">0</div>
+                </div>
+            </div>
+            
+            <div class="games-grid">
+                <div class="game-card" onclick="showGame('drawGuess')">
+                    <div class="game-icon">🎨</div>
+                    <div class="game-title">Draw & Guess</div>
+                    <div class="game-description">One player draws, the other guesses. Digital creativity meets competition!</div>
+                </div>
+                
+                <div class="game-card" onclick="showGame('ticTacToe')">
+                    <div class="game-icon">⚡</div>
+                    <div class="game-title">Tic Tac Toe</div>
+                    <div class="game-description">Classic strategy with neon style. Geometric warfare in the digital arena!</div>
+                </div>
+                
+                <div class="game-card" onclick="showGame('rockPaperScissors')">
+                    <div class="game-icon">✂️</div>
+                    <div class="game-title">Rock Paper Scissors</div>
+                    <div class="game-description">Classic hand game with digital style. Winner takes all in one round!</div>
+                </div>
+                
+                <div class="game-card" onclick="showGame('memoryGame')">
+                    <div class="game-icon">🤖</div>
+                    <div class="game-title">Memory Game</div>
+                    <div class="game-description">Flip cards to find matches. Test your memory skills!</div>
+                </div>
+                
+                <div class="game-card" onclick="showGame('wordPuzzle')">
+                    <div class="game-icon">🔤</div>
+                    <div class="game-title">Word Puzzle</div>
+                    <div class="game-description">Guess the hidden word with only 3 wrong guesses allowed!</div>
+                </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DRAW & GUESS PAGE -->
+        <div id="drawGuess" class="game-page">
+            <div class="game-header">
+                <h1>🎨 DRAW & GUESS</h1>
+                <p>PIXEL BRUSH ARENA</p>
+            </div>
+            
+            <div class="game-status">
+                <div class="status-text" id="drawStatus">Player 1's Turn to Draw</div>
+                <div class="turn-indicator" id="drawPrompt">Draw: ROBOT</div>
+            </div>
+            
+            <div class="draw-container">
+                <div class="canvas-area">
+                    <canvas id="drawCanvas" width="600" height="400"></canvas>
+                </div>
+                
+                <div class="drawing-tools">
+                    <button class="tool-btn clear-btn" onclick="clearCanvas()">CLEAR</button>
+                    <div class="color-picker" style="background: black;" onclick="setDrawColor('black')"></div>
+                    <div class="color-picker" style="background: #00BFFF;" onclick="setDrawColor('#00BFFF')"></div>
+                    <div class="color-picker" style="background: #32CD32;" onclick="setDrawColor('#32CD32')"></div>
+                    <div class="color-picker" style="background: #FFA500;" onclick="setDrawColor('#FFA500')"></div>
+                    <div class="color-picker" style="background: #FF6347;" onclick="setDrawColor('#FF6347')"></div>
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button class="control-btn" onclick="nextDrawRound()">NEXT ROUND</button>
+                <button class="control-btn secondary" onclick="resetDrawGame()">NEW GAME</button>
+            </div>
+        </div>
+        
+        <!-- TIC TAC TOE PAGE -->
+        <div id="ticTacToe" class="game-page">
+            <div class="game-header">
+                <h1>⚡ TIC TAC TOE</h1>
+                <p>GEOMETRIC WARFARE</p>
+            </div>
+            
+            <div class="game-status">
+                <div class="status-text" id="tttStatus">Player 1's Turn (△)</div>
+                <div class="turn-indicator">First to three in a row wins!</div>
+            </div>
+            
+            <div class="ttt-board" id="tttBoard"></div>
+            
+            <div class="game-controls">
+                <button class="control-btn" onclick="resetTicTacToe()">NEW ROUND</button>
+            </div>
+        </div>
+        
+        <!-- ROCK PAPER SCISSORS PAGE -->
+        <div id="rockPaperScissors" class="game-page">
+            <div class="game-header">
+                <h1>✂️ ROCK PAPER SCISSORS</h1>
+                <p>CLASSIC SHOWDOWN</p>
+            </div>
+            
+            <div class="game-status">
+                <div class="status-text" id="rpsStatus">Single Round Showdown</div>
+                <div class="turn-indicator">Winner takes all!</div>
+            </div>
+            
+            <div class="rps-container">
+                <div class="players-area">
+                    <div class="player-choice">
+                        <h3>Player 1</h3>
+                        <div class="choice-display" id="player1Choice">?</div>
+                        <div class="choice-buttons">
+                            <button class="rps-btn" onclick="makeChoice(1, 'rock')">🪨</button>
+                            <button class="rps-btn" onclick="makeChoice(1, 'paper')">📄</button>
+                            <button class="rps-btn" onclick="makeChoice(1, 'scissors')">✂️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="vs-divider">VS</div>
+                    
+                    <div class="player-choice">
+                        <h3>Player 2</h3>
+                        <div class="choice-display" id="player2Choice">?</div>
+                        <div class="choice-buttons">
+                            <button class="rps-btn" onclick="makeChoice(2, 'rock')">🪨</button>
+                            <button class="rps-btn" onclick="makeChoice(2, 'paper')">📄</button>
+                            <button class="rps-btn" onclick="makeChoice(2, 'scissors')">✂️</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="round-result" id="roundResult"></div>
+            </div>
+            
+            <div class="game-controls">
+                <button class="control-btn" onclick="nextRPSRound()" id="rpsNextBtn" style="display: none;">NEXT ROUND</button>
+                <button class="control-btn secondary" onclick="resetRPS()">NEW GAME</button>
+            </div>
+        </div>
+        
+        <!-- MEMORY GAME PAGE -->
+        <div id="memoryGame" class="game-page">
+            <div class="game-header">
+                <h1>🤖 MEMORY GAME</h1>
+                <p>ROBOTS VS PLANETS</p>
+            </div>
+            
+            <div class="game-status">
+                <div class="status-text" id="memoryStatus">Player 1's Turn</div>
+                <div class="turn-indicator">Find matching pairs to score points!</div>
+            </div>
+            
+            <div class="memory-board" id="memoryBoard"></div>
+            
+            <div class="game-controls">
+                <button class="control-btn" onclick="resetMemoryGame()">NEW GAME</button>
+            </div>
+        </div>
+        
+        <!-- WORD PUZZLE PAGE -->
+        <div id="wordPuzzle" class="game-page">
+            <div class="game-header">
+                <h1>🔤 WORD PUZZLE</h1>
+                <p>DIGITAL MATRIX</p>
+            </div>
+            
+            <div class="game-status">
+                <div class="status-text" id="wordStatus">Player 1's Turn</div>
+                <div class="turn-indicator" id="wordHint">Guess the hidden word!</div>
+            </div>
+            
+            <div class="word-display" id="wordDisplay">_ _ _ _ _</div>
+            
+            <div class="alphabet-grid" id="alphabetGrid"></div>
+            
+            <div class="game-controls">
+                <button class="control-btn" onclick="resetWordPuzzle()">NEW WORD</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Win Celebration -->
+    <div class="win-celebration" id="winCelebration">
+        <div class="win-message" id="winMessage">PLAYER 1 WINS!</div>
+    </div>
+
+    <script>
+        // Global Game State
+        let currentPlayer = 1;
+        let player1Score = 0;
+        let player2Score = 0;
+        
+        // Navigation
+        function showGame(gameId) {
+            document.getElementById('homePage').style.display = 'none';
+            document.querySelectorAll('.game-page').forEach(page => page.style.display = 'none');
+            document.getElementById(gameId).style.display = 'block';
+            document.querySelector('.back-btn').style.display = 'block';
+            
+            // Initialize specific games
+            if (gameId === 'ticTacToe') initializeTicTacToe();
+            else if (gameId === 'memoryGame') initializeMemoryGame();
+            else if (gameId === 'wordPuzzle') initializeWordPuzzle();
+            else if (gameId === 'drawGuess') initializeDrawGuess();
+            else if (gameId === 'rockPaperScissors') initializeRPS();
+        }
+        
+        function goHome() {
+            document.querySelectorAll('.game-page').forEach(page => page.style.display = 'none');
+            document.getElementById('homePage').style.display = 'block';
+            document.querySelector('.back-btn').style.display = 'none';
+        }
+        
+        function updateScores() {
+            document.getElementById('player1Score').textContent = player1Score;
+            document.getElementById('player2Score').textContent = player2Score;
+        }
+        
+        function showWinCelebration(winner) {
+            document.getElementById('winMessage').textContent = `PLAYER ${winner} WINS!`;
+            document.getElementById('winCelebration').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('winCelebration').style.display = 'none';
+            }, 3000);
+        }
+        
+        function awardPoint(player) {
+            if (player === 1) player1Score++;
+            else player2Score++;
+            updateScores();
+        }
+        
+        // TIC TAC TOE
+        let tttBoard = Array(9).fill('');
+        let tttGameActive = true;
+        
+        function initializeTicTacToe() {
+            tttBoard = Array(9).fill('');
+            currentPlayer = 1;
+            tttGameActive = true;
+            
+            const board = document.getElementById('tttBoard');
+            board.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('button');
+                cell.className = 'ttt-cell';
+                cell.dataset.index = i;
+                cell.onclick = () => handleTttClick(i, cell);
+                board.appendChild(cell);
+            }
+            
+            document.getElementById('tttStatus').textContent = 'Player 1\'s Turn (△)';
+        }
+        
+        function handleTttClick(index, cell) {
+            if (tttBoard[index] !== '' || !tttGameActive) return;
+            
+            const symbol = currentPlayer === 1 ? '△' : '□';
+            tttBoard[index] = symbol;
+            cell.textContent = symbol;
+            cell.classList.add(currentPlayer === 1 ? 'x' : 'o');
+            
+            if (checkTttWinner()) {
+                document.getElementById('tttStatus').textContent = `Player ${currentPlayer} Wins! 🏆`;
+                awardPoint(currentPlayer);
+                showWinCelebration(currentPlayer);
+                tttGameActive = false;
+            } else if (tttBoard.every(cell => cell !== '')) {
+                document.getElementById('tttStatus').textContent = 'Draw! 🤝';
+                tttGameActive = false;
+            } else {
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                const nextSymbol = currentPlayer === 1 ? '△' : '□';
+                document.getElementById('tttStatus').textContent = `Player ${currentPlayer}'s Turn (${nextSymbol})`;
+            }
+        }
+        
+        function checkTttWinner() {
+            const winPatterns = [
+                [0,1,2], [3,4,5], [6,7,8], // rows
+                [0,3,6], [1,4,7], [2,5,8], // columns
+                [0,4,8], [2,4,6] // diagonals
+            ];
+            
+            const symbol = currentPlayer === 1 ? '△' : '□';
+            return winPatterns.some(pattern => 
+                pattern.every(index => tttBoard[index] === symbol)
+            );
+        }
+        
+        function resetTicTacToe() {
+            initializeTicTacToe();
+        }
+        
+        // MEMORY GAME
+        const memoryIcons = ['🤖', '🛸', '🌍', '⭐', '🚀', '👽'];
+        let memoryCards = [];
+        let flippedCards = [];
+        let memoryMatches = 0;
+        
+        function initializeMemoryGame() {
+            memoryCards = [...memoryIcons, ...memoryIcons];
+            shuffleArray(memoryCards);
+            flippedCards = [];
+            memoryMatches = 0;
+            currentPlayer = 1;
+            
+            const board = document.getElementById('memoryBoard');
+            board.innerHTML = '';
+            
+            memoryCards.forEach((icon, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.index = index;
+                card.dataset.icon = icon;
+                card.textContent = '?';
+                card.onclick = () => flipMemoryCard(card, index);
+                board.appendChild(card);
+            });
+            
+            document.getElementById('memoryStatus').textContent = 'Player 1\'s Turn';
+        }
+        
+        function flipMemoryCard(card, index) {
+            if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) return;
+            
+            card.classList.add('flipped');
+            card.textContent = card.dataset.icon;
+            flippedCards.push({card, index, icon: card.dataset.icon});
+            
+            if (flippedCards.length === 2) {
+                setTimeout(checkMemoryMatch, 1000);
+            }
+        }
+        
+        function checkMemoryMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.icon === card2.icon) {
+                card1.card.classList.add('matched');
+                card2.card.classList.add('matched');
+                memoryMatches++;
+                awardPoint(currentPlayer);
+                
+                if (memoryMatches === memoryIcons.length) {
+                    document.getElementById('memoryStatus').textContent = 'Game Complete! 🎉';
+                }
+            } else {
+                card1.card.classList.remove('flipped');
+                card2.card.classList.remove('flipped');
+                card1.card.textContent = '?';
+                card2.card.textContent = '?';
+                
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                document.getElementById('memoryStatus').textContent = `Player ${currentPlayer}'s Turn`;
+            }
+            
+            flippedCards = [];
+        }
+        
+        function resetMemoryGame() {
+            initializeMemoryGame();
+        }
+        
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // WORD PUZZLE
+        const puzzleWords = [
+            {word: 'ROBOT', hint: 'Mechanical being from the future'},
+            {word: 'PIXEL', hint: 'Smallest unit of digital display'},
+            {word: 'MATRIX', hint: 'Digital reality simulation'},
+            {word: 'CYBER', hint: 'Related to computers and internet'},
+            {word: 'NEON', hint: 'Bright glowing light effect'},
+            {word: 'ARCADE', hint: 'Classic gaming venue'}
+        ];
+        
+        let currentWord = '';
+        let guessedLetters = [];
+        let wordGameActive = true;
+        let wrongGuesses = 0;
+        let maxWrongGuesses = 3;
+        
+        function initializeWordPuzzle() {
+            const puzzle = puzzleWords[Math.floor(Math.random() * puzzleWords.length)];
+            currentWord = puzzle.word;
+            guessedLetters = [];
+            wordGameActive = true;
+            currentPlayer = 1;
+            wrongGuesses = 0;
+            
+            document.getElementById('wordHint').textContent = puzzle.hint;
+            document.getElementById('wordStatus').textContent = `Player 1's Turn (${maxWrongGuesses - wrongGuesses} guesses left)`;
+            
+            updateWordDisplay();
+            createAlphabet();
+        }
+        
+        function updateWordDisplay() {
+            const display = currentWord.split('').map(letter => 
+                guessedLetters.includes(letter) ? letter : '_'
+            ).join(' ');
+            document.getElementById('wordDisplay').textContent = display;
+            
+            if (!display.includes('_')) {
+                document.getElementById('wordStatus').textContent = `Player ${currentPlayer} Wins! 🏆`;
+                awardPoint(currentPlayer);
+                showWinCelebration(currentPlayer);
+                wordGameActive = false;
+            }
+        }
+        
+        function createAlphabet() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const grid = document.getElementById('alphabetGrid');
+            grid.innerHTML = '';
+            
+            alphabet.split('').forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn';
+                btn.textContent = letter;
+                btn.onclick = () => guessLetter(letter, btn);
+                grid.appendChild(btn);
+            });
+        }
+        
+        function guessLetter(letter, btn) {
+            if (!wordGameActive || guessedLetters.includes(letter)) return;
+            
+            guessedLetters.push(letter);
+            btn.disabled = true;
+            
+            if (currentWord.includes(letter)) {
+                btn.classList.add('correct');
+                updateWordDisplay();
+            } else {
+                btn.classList.add('incorrect');
+                wrongGuesses++;
+                
+                if (wrongGuesses >= maxWrongGuesses) {
+                    document.getElementById('wordStatus').textContent = `Player ${currentPlayer} Lost! Word was: ${currentWord}`;
+                    wordGameActive = false;
+                    // Award point to other player
+                    const otherPlayer = currentPlayer === 1 ? 2 : 1;
+                    awardPoint(otherPlayer);
+                    showWinCelebration(otherPlayer);
+                } else {
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                    if (wordGameActive) {
+                        document.getElementById('wordStatus').textContent = `Player ${currentPlayer}'s Turn (${maxWrongGuesses - wrongGuesses} guesses left)`;
+                    }
+                }
+            }
+        }
+        
+        function resetWordPuzzle() {
+            initializeWordPuzzle();
+        }
+        
+        // ROCK PAPER SCISSORS
+        const rpsChoices = {
+            rock: '🪨',
+            paper: '📄',
+            scissors: '✂️'
+        };
+        
+        let rpsRound = 1;
+        let rpsMaxRounds = 1;
+        let player1Choice = null;
+        let player2Choice = null;
+        let rpsPlayer1Wins = 0;
+        let rpsPlayer2Wins = 0;
+        
+        function initializeRPS() {
+            rpsRound = 1;
+            player1Choice = null;
+            player2Choice = null;
+            rpsPlayer1Wins = 0;
+            rpsPlayer2Wins = 0;
+            
+            document.getElementById('rpsStatus').textContent = 'Single Round Showdown';
+            document.getElementById('player1Choice').textContent = '?';
+            document.getElementById('player2Choice').textContent = '?';
+            document.getElementById('roundResult').textContent = 'Make your choices!';
+            document.getElementById('rpsNextBtn').style.display = 'none';
+            
+            // Enable all buttons
+            document.querySelectorAll('.rps-btn').forEach(btn => btn.disabled = false);
+        }
+        
+        function makeChoice(player, choice) {
+            if (player === 1) {
+                player1Choice = choice;
+                document.getElementById('player1Choice').textContent = rpsChoices[choice];
+            } else {
+                player2Choice = choice;
+                document.getElementById('player2Choice').textContent = rpsChoices[choice];
+            }
+            
+            // Disable buttons for the player who made their choice
+            const playerButtons = document.querySelectorAll(`.player-choice:nth-child(${player === 1 ? 1 : 3}) .rps-btn`);
+            playerButtons.forEach(btn => btn.disabled = true);
+            
+            // Check if both players have made their choices
+            if (player1Choice && player2Choice) {
+                setTimeout(evaluateRound, 1000);
+            }
+        }
+        
+        function evaluateRound() {
+            let result = '';
+            
+            if (player1Choice === player2Choice) {
+                result = "It's a tie!";
+            } else if (
+                (player1Choice === 'rock' && player2Choice === 'scissors') ||
+                (player1Choice === 'paper' && player2Choice === 'rock') ||
+                (player1Choice === 'scissors' && player2Choice === 'paper')
+            ) {
+                result = 'Player 1 wins this round!';
+                rpsPlayer1Wins++;
+            } else {
+                result = 'Player 2 wins this round!';
+                rpsPlayer2Wins++;
+            }
+            
+            document.getElementById('roundResult').textContent = result;
+            
+            // Game ends after single round
+            setTimeout(endRPSGame, 2000);
+        }
+        
+        function nextRPSRound() {
+            rpsRound++;
+            player1Choice = null;
+            player2Choice = null;
+            
+            document.getElementById('rpsStatus').textContent = `Round ${rpsRound} of ${rpsMaxRounds}`;
+            document.getElementById('player1Choice').textContent = '?';
+            document.getElementById('player2Choice').textContent = '?';
+            document.getElementById('roundResult').textContent = 'Make your choices!';
+            document.getElementById('rpsNextBtn').style.display = 'none';
+            
+            // Re-enable all buttons
+            document.querySelectorAll('.rps-btn').forEach(btn => btn.disabled = false);
+        }
+        
+        function endRPSGame() {
+            let winner;
+            if (rpsPlayer1Wins > rpsPlayer2Wins) {
+                winner = 1;
+                document.getElementById('roundResult').textContent = `Player 1 wins!`;
+                awardPoint(winner);
+                showWinCelebration(winner);
+            } else if (rpsPlayer2Wins > rpsPlayer1Wins) {
+                winner = 2;
+                document.getElementById('roundResult').textContent = `Player 2 wins!`;
+                awardPoint(winner);
+                showWinCelebration(winner);
+            } else {
+                document.getElementById('roundResult').textContent = `It's a tie! No points awarded.`;
+            }
+            
+            document.getElementById('rpsNextBtn').style.display = 'none';
+            document.querySelectorAll('.rps-btn').forEach(btn => btn.disabled = true);
+        }
+        
+        function resetRPS() {
+            initializeRPS();
+        }
+        
+        // DRAW & GUESS
+        const drawPrompts = ['ROBOT', 'SPACESHIP', 'PIXEL', 'ARCADE', 'NEON', 'CYBER', 'MATRIX', 'DIGITAL'];
+        let canvas, ctx;
+        let isDrawing = false;
+        let currentColor = 'black';
+        let drawRound = 1;
+        
+        function initializeDrawGuess() {
+            canvas = document.getElementById('drawCanvas');
+            ctx = canvas.getContext('2d');
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentColor;
+            
+            newDrawPrompt();
+        }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                            e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        function setDrawColor(color) {
+            currentColor = color;
+            ctx.strokeStyle = color;
+        }
+        
+        function newDrawPrompt() {
+            const prompt = drawPrompts[Math.floor(Math.random() * drawPrompts.length)];
+            document.getElementById('drawPrompt').textContent = `Draw: ${prompt}`;
+            clearCanvas();
+        }
+        
+        function nextDrawRound() {
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            document.getElementById('drawStatus').textContent = `Player ${currentPlayer}'s Turn to Draw`;
+            newDrawPrompt();
+            // Award point randomly for demo
+            awardPoint(Math.random() > 0.5 ? 1 : 2);
+        }
+        
+        function resetDrawGame() {
+            currentPlayer = 1;
+            document.getElementById('drawStatus').textContent = 'Player 1\'s Turn to Draw';
+            newDrawPrompt();
+        }
+        
+        // Initialize
+        updateScores();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97adc1b5d7a2851f',t:'MTc1NzE1OTUwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
