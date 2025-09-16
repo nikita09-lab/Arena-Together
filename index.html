@@ -24,7 +24,6 @@
             max-width: 1400px;
             margin: 0 auto;
             background: transparent;
-            min-height: 100vh;
             position: relative;
         }
         
@@ -230,7 +229,6 @@
             position: relative;
             z-index: 10;
             background: linear-gradient(135deg, #4C5DD7 0%, #6366f1 50%, #8b5cf6 100%);
-            min-height: 100vh;
         }
         
         .home-page {
@@ -239,7 +237,7 @@
         
         .game-header {
             background: linear-gradient(135deg, #2E2E2E, #4682B4);
-            padding: 25px;
+            padding: 10px 0; /* Reduced padding */
             text-align: center;
             color: white;
         }
@@ -898,7 +896,10 @@
             document.querySelectorAll('.game-page').forEach(page => page.style.display = 'none');
             document.getElementById(gameId).style.display = 'block';
             document.querySelector('.back-btn').style.display = 'block';
-            
+
+            // Scroll container to top
+            document.querySelector('.container').scrollIntoView({ behavior: 'auto', block: 'start' });
+
             // Initialize specific games
             if (gameId === 'ticTacToe') initializeTicTacToe();
             else if (gameId === 'memoryGame') initializeMemoryGame();
