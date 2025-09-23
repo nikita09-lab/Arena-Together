@@ -4,1840 +4,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Playoff - Two Player Arena</title>
-    <!-- Tailwind CSS for a minimal theme -->
+    <title>Authentication System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
-            transition: background-color 0.5s ease-in-out;
-            color: #1a1a1a;
-            min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Background colors for player turns */
-        .bg-player1 {
-            background-color: #fde047;
-            /* Yellow */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .bg-player2 {
-            background-color: #ea580c;
-            /* Red-orange */
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Background colors for game pages */
-        .bg-home {
-            background-color: #fffbeb;
+        .input-focus:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .bg-2048 {
-            background-color: #faf8ef;
-            color: #776e65;
+        .success-message,
+        .error-message {
+            display: none;
+            animation: slideIn 0.5s ease-out;
         }
 
-        /* Animated Background */
-        .bg-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent 40%, rgba(26, 26, 26, 0.02) 50%, transparent 60%),
-                linear-gradient(-45deg, transparent 40%, rgba(26, 26, 26, 0.02) 50%, transparent 60%);
-            background-size: 60px 60px;
-            animation: slidePattern 20s linear infinite;
-            z-index: 0;
-        }
-
-        @keyframes slidePattern {
-            0% {
-                transform: translateX(0) translateY(0);
-            }
-
-            100% {
-                transform: translateX(60px) translateY(60px);
-            }
-        }
-
-        /* General styles */
-        .game-header h1,
-        .game-header p,
-        .logo,
-        .tagline {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .game-card {
-            border: 2px solid transparent;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease-in-out;
-            transform-style: preserve-3d;
-        }
-
-        .game-card:hover {
-            transform: translateY(-8px) scale(1.02) rotateX(2deg);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            border-color: #d1d5db;
-            /* A subtle border on hover */
-        }
-
-        .game-card-content {
-            transform: translateZ(20px);
-        }
-
-        .game-alert {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2000;
+        .page {
             display: none;
         }
 
-        .connect-four-board {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-template-rows: repeat(6, 1fr);
-            width: 700px;
-            height: 600px;
-            background-color: #0b0a08;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            gap: 5px;
+        .page.active {
+            display: block;
         }
 
-        .connect-four-cell {
-            background-color: #1a1a1a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .connect-four-cell:hover {
-            transform: scale(1.05);
-        }
-
-        .connect-four-cell.player1-piece {
-            background-color: #fde047;
-            /* Yellow */
-        }
-
-        .connect-four-cell.player2-piece {
-            background-color: #ea580c;
-            /* Red-orange */
-        }
-
-        #dotBoxCanvas {
-            border: 2px solid #333;
-            background-color: #f8f8f8;
-            cursor: pointer;
-        }
-
-        #snakeDuelCanvas {
-            border: 2px solid #333;
-            background-color: #1a1a1a;
-        }
-
-        .game-2048-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 10px;
-            background-color: #bbada0;
-            border-radius: 6px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            touch-action: none;
-        }
-
-        .game-2048-cell {
-            background-color: #cdc1b4;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 2.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-        }
-
-        .tile-2,
-        .tile-4,
-        .tile-8,
-        .tile-16,
-        .tile-32,
-        .tile-64,
-        .tile-128,
-        .tile-256,
-        .tile-512,
-        .tile-1024,
-        .tile-2048 {
-            color: #fff;
-            background-color: #eee4da;
-        }
-
-        .tile-2 {
-            background-color: #eee4da;
-            color: #776e65;
-        }
-
-        .tile-4 {
-            background-color: #ede0c8;
-            color: #776e65;
-        }
-
-        .tile-8 {
-            background-color: #f2b179;
-        }
-
-        .tile-16 {
-            background-color: #f59563;
-        }
-
-        .tile-32 {
-            background-color: #f67c5f;
-        }
-
-        .tile-64 {
-            background-color: #f65e3b;
-        }
-
-        .tile-128 {
-            background-color: #edcf72;
-        }
-
-        .tile-256 {
-            background-color: #edcc61;
-        }
-
-        .tile-512 {
-            background-color: #edc850;
-        }
-
-        .tile-1024 {
-            background-color: #edc53f;
-        }
-
-        .tile-2048 {
-            background-color: #edc22e;
+        .fade-transition {
+            transition: opacity 0.3s ease-in-out;
         }
     </style>
 </head>
 
-<body class="bg-home min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="bg-pattern"></div>
-    <button class="back-btn hidden fixed top-4 left-4 z-50 bg-stone-800 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-700 transition-colors" onclick="goHome()">
-        <span class="text-sm">◀ HOME</span>
-    </button>
-    <div class="container max-w-7xl w-full relative z-10">
-
-        <!-- HOME PAGE -->
-        <div id="homePage" class="home-page">
-            <div class="text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <div class="text-4xl font-bold mb-2 text-white">PIXEL PLAYOFF</div>
-                <div class="text-sm text-stone-400">TWO PLAYER ARENA</div>
-            </div>
-
-            <div class="score-panel flex justify-between p-6 bg-stone-800 rounded-t-xl shadow-lg mt-8">
-                <div class="player-score bg-stone-700 p-4 rounded-xl text-white font-semibold text-center w-1/2 mr-2">
-                    <div class="text-xs text-stone-400">PLAYER 1</div>
-                    <div class="text-3xl font-bold" id="player1Score">0</div>
-                </div>
-                <div class="player-score bg-stone-700 p-4 rounded-xl text-white font-semibold text-center w-1/2 ml-2">
-                    <div class="text-xs text-stone-400">PLAYER 2</div>
-                    <div class="text-3xl font-bold" id="player2Score">0</div>
-                </div>
-            </div>
-
-            <div class="games-grid grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('drawGuess')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">🎨</div>
-                        <div class="text-xl font-bold text-white mb-2">Draw & Guess</div>
-                        <div class="text-sm text-stone-400">One player draws, the other guesses.</div>
-                    </div>
-                </div>
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('ticTacToe')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">⚡</div>
-                        <div class="text-xl font-bold text-white mb-2">Tic Tac Toe</div>
-                        <div class="text-sm text-stone-400">Classic strategy with a minimal style.</div>
-                    </div>
-                </div>
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('rockPaperScissors')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">✂️</div>
-                        <div class="text-xl font-bold text-white mb-2">Rock Paper Scissors</div>
-                        <div class="text-sm text-stone-400">Classic hand game, digital style.</div>
-                    </div>
-                </div>
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('memoryGame')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">🧠</div>
-                        <div class="text-xl font-bold text-white mb-2">Memory Game</div>
-                        <div class="text-sm text-stone-400">Find matching pairs to score points.</div>
-                    </div>
-                </div>
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('connectFour')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">🟡</div>
-                        <div class="text-xl font-bold text-white mb-2">Connect 4</div>
-                        <div class="text-sm text-stone-400">Strategy to connect four pieces.</div>
-                    </div>
-                </div>
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('dotsAndBoxes')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">◻️</div>
-                        <div class="text-xl font-bold text-white mb-2">Dots and Boxes</div>
-                        <div class="text-sm text-stone-400">Claim boxes to win.</div>
-                    </div>
-                </div>
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('snakeDuel')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">🐍</div>
-                        <div class="text-xl font-bold text-white mb-2">Snake Duel</div>
-                        <div class="text-sm text-stone-400">Classic snake, head-to-head.</div>
-                    </div>
-                </div>
-                <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('2048Game')">
-                    <div class="game-card-content">
-                        <div class="text-4xl mb-4">🔢</div>
-                        <div class="text-xl font-bold text-white mb-2">2048</div>
-                        <div class="text-sm text-stone-400">Swipe to combine numbers.</div>
-                    </div>
-                </div>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="flex justify-center mb-6">
+            <div class="glass-effect rounded-full p-1 flex space-x-1">
+                <button onclick="showPage('signup')" id="signupTab"
+                    class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-white text-purple-700">Sign
+                    Up</button>
+                <button onclick="showPage('signin')" id="signinTab"
+                    class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 text-white hover:bg-white/10">Log
+                    In</button>
+                <button onclick="showPage('forgot')" id="forgotTab"
+                    class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 text-white hover:bg-white/10">Reset</button>
             </div>
         </div>
 
-        <!-- DRAW & GUESS PAGE -->
-        <div id="drawGuess" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🎨 DRAW & GUESS</h1>
-                <p class="text-stone-400 text-sm">PIXEL BRUSH ARENA</p>
-            </div>
-
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="drawStatus">Player 1's Turn to Draw</div>
-                <div class="text-sm text-stone-400" id="drawPrompt">Draw: ROBOT</div>
-            </div>
-
-            <div class="draw-container max-w-4xl mx-auto p-6">
-                <div class="canvas-area text-center mb-6">
-                    <canvas id="drawCanvas" class="bg-stone-800 rounded-xl border border-stone-600 shadow-xl" width="800" height="600"></canvas>
-                </div>
-
-                <div class="drawing-tools flex justify-center gap-4 flex-wrap">
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="setDrawColor('#000000', 4)">Draw</button>
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="setDrawColor('#1f2937', 20)">Eraser</button>
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="clearCanvas()">Clear</button>
-                    <input type="color" class="w-10 h-10 rounded-full cursor-pointer" oninput="setDrawColor(this.value, 4)">
-                </div>
-            </div>
-
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="nextDrawRound()">NEXT ROUND</button>
-                <button class="bg-stone-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-stone-600 transition-colors" onclick="resetDrawGame()">NEW GAME</button>
+        <div id="successMessage"
+            class="success-message mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span id="successText">Success!</span>
             </div>
         </div>
 
-        <!-- TIC TAC TOE PAGE -->
-        <div id="ticTacToe" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">⚡ TIC TAC TOE</h1>
-                <p class="text-stone-400 text-sm">GEOMETRIC WARFARE</p>
-            </div>
-
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="tttStatus">Player 1's Turn (X)</div>
-                <div class="text-sm text-stone-400">First to three in a row wins!</div>
-            </div>
-
-            <div class="ttt-board grid grid-cols-3 gap-4 max-w-sm mx-auto my-8 p-4 bg-stone-800 rounded-xl shadow-lg" id="tttBoard"></div>
-
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetTicTacToe()">NEW ROUND</button>
+        <div id="errorMessage" class="error-message mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span id="errorText">Error occurred!</span>
             </div>
         </div>
 
-        <!-- ROCK PAPER SCISSORS PAGE -->
-        <div id="rockPaperScissors" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">✂️ ROCK PAPER SCISSORS</h1>
-                <p class="text-stone-400 text-sm">CLASSIC SHOWDOWN</p>
-            </div>
+        <div id="signupPage" class="page active fade-transition">
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Create Account</h1>
+                    <p class="text-white/80">Join us and start your journey today</p>
+                </div>
 
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="rpsStatus">Single Round Showdown</div>
-                <div class="text-sm text-stone-400">Winner takes all!</div>
-            </div>
+                <form id="signupForm" class="space-y-6">
+                    <div>
+                        <label for="signupFullName" class="block text-sm font-medium text-white mb-2">Full Name</label>
+                        <input type="text" id="signupFullName" name="fullName" required
+                            class="input-focus w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 transition-all duration-200"
+                            placeholder="Enter your full name">
+                    </div>
 
-            <div class="rps-container max-w-3xl mx-auto my-8">
-                <div class="players-area grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                    <div class="player-choice p-6 bg-stone-800 rounded-xl shadow-lg text-center">
-                        <h3 class="text-lg font-semibold text-white mb-4">Player 1</h3>
-                        <div class="text-5xl my-4" id="player1Choice">?</div>
-                        <div class="choice-buttons flex justify-center gap-2">
-                            <button class="rps-btn text-3xl p-3 bg-stone-700 rounded-xl shadow-md hover:bg-stone-600 transition-colors" onclick="makeChoice(1, 'rock')">🪨</button>
-                            <button class="rps-btn text-3xl p-3 bg-stone-700 rounded-xl shadow-md hover:bg-stone-600 transition-colors" onclick="makeChoice(1, 'paper')">📄</button>
-                            <button class="rps-btn text-3xl p-3 bg-stone-700 rounded-xl shadow-md hover:bg-stone-600 transition-colors" onclick="makeChoice(1, 'scissors')">✂️</button>
+                    <div>
+                        <label for="signupEmail" class="block text-sm font-medium text-white mb-2">Email
+                            Address</label>
+                        <input type="email" id="signupEmail" name="email" required
+                            class="input-focus w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 transition-all duration-200"
+                            placeholder="Enter your email">
+                    </div>
+
+                    <div>
+                        <label for="signupPassword" class="block text-sm font-medium text-white mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" id="signupPassword" name="password" required
+                                class="input-focus w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 transition-all duration-200 pr-12"
+                                placeholder="Create a password">
+                            <button type="button" onclick="togglePassword('signupPassword')"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                    </path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
-                    <div class="vs-divider text-center font-bold text-4xl text-amber-600">VS</div>
-                    <div class="player-choice p-6 bg-stone-800 rounded-xl shadow-lg text-center">
-                        <h3 class="text-lg font-semibold text-white mb-4">Player 2</h3>
-                        <div class="text-5xl my-4" id="player2Choice">?</div>
-                        <div class="choice-buttons flex justify-center gap-2">
-                            <button class="rps-btn text-3xl p-3 bg-stone-700 rounded-xl shadow-md hover:bg-stone-600 transition-colors" onclick="makeChoice(2, 'rock')">🪨</button>
-                            <button class="rps-btn text-3xl p-3 bg-stone-700 rounded-xl shadow-md hover:bg-stone-600 transition-colors" onclick="makeChoice(2, 'paper')">📄</button>
-                            <button class="rps-btn text-3xl p-3 bg-stone-700 rounded-xl shadow-md hover:bg-stone-600 transition-colors" onclick="makeChoice(2, 'scissors')">✂️</button>
+
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox" id="terms" name="terms" required
+                            class="mt-1 w-4 h-4 text-blue-600 bg-white/10 border-white/20 rounded focus:ring-blue-500 focus:ring-2">
+                        <label for="terms" class="text-sm text-white/90">
+                            I agree to the <a href="#" class="text-blue-200 hover:text-blue-100 underline">Terms of
+                                Service</a> and <a href="#" class="text-blue-200 hover:text-blue-100 underline">Privacy
+                                Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-white text-purple-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-white/80">
+                        Already have an account?
+                        <button onclick="showPage('signin')"
+                            class="text-blue-200 hover:text-blue-100 underline font-medium">Log in</button>
+                    </p>
+                </div>
+
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-white/20"></div>
                         </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-transparent text-white/80">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <button type="button" onclick="signupWithGoogle()"
+                            class="w-full inline-flex justify-center items-center px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-200 transform hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                            </svg>
+                            Google
+                        </button>
+
+                        <button type="button" onclick="signupWithGitHub()"
+                            class="w-full inline-flex justify-center items-center px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-200 transform hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                            GitHub
+                        </button>
                     </div>
                 </div>
-                <div class="round-result text-center font-bold text-xl my-6 p-4 bg-stone-800 rounded-xl shadow-lg" id="roundResult">Make your choices!</div>
-            </div>
 
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors hidden" onclick="nextRPSRound()" id="rpsNextBtn">NEXT ROUND</button>
-                <button class="bg-stone-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-stone-600 transition-colors" onclick="resetRPS()">NEW GAME</button>
+
             </div>
         </div>
 
-        <!-- MEMORY GAME PAGE -->
-        <div id="memoryGame" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🧠 MEMORY GAME</h1>
-                <p class="text-stone-400 text-sm">ROBOTS VS PLANETS</p>
-            </div>
+        <div id="signinPage" class="page fade-transition">
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                    <p class="text-white/80">Log in to your account</p>
+                </div>
 
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="memoryStatus">Player 1's Turn</div>
-                <div class="text-sm text-stone-400">Find matching pairs to score points!</div>
-            </div>
+                <form id="signinForm" class="space-y-6">
+                    <div>
+                        <label for="signinEmail" class="block text-sm font-medium text-white mb-2">Email
+                            Address</label>
+                        <input type="email" id="signinEmail" name="email" required
+                            class="input-focus w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 transition-all duration-200"
+                            placeholder="Enter your email">
+                    </div>
 
-            <div class="memory-board grid grid-cols-4 gap-4 max-w-2xl mx-auto my-8 p-4 bg-stone-800 rounded-xl shadow-lg" id="memoryBoard"></div>
-
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetMemoryGame()">NEW GAME</button>
-            </div>
-        </div>
-
-        <!-- CONNECT 4 PAGE -->
-        <div id="connectFour" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🟡 CONNECT 4</h1>
-                <p class="text-stone-400 text-sm">STRATEGY TO CONNECT FOUR</p>
-            </div>
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="cfStatus">Player 1's Turn (Yellow)</div>
-            </div>
-            <div class="flex justify-center my-8">
-                <div id="connectFourBoard" class="connect-four-board"></div>
-            </div>
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetConnectFour()">NEW GAME</button>
-            </div>
-        </div>
-
-        <!-- DOTS AND BOXES PAGE -->
-        <div id="dotsAndBoxes" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">◻️ DOTS AND BOXES</h1>
-                <p class="text-stone-400 text-sm">CLAIM BOXES TO WIN</p>
-            </div>
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="dabStatus">Player 1's Turn</div>
-            </div>
-            <div class="flex justify-center my-8">
-                <canvas id="dotBoxCanvas" width="600" height="600"></canvas>
-            </div>
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetDotsAndBoxes()">NEW GAME</button>
-            </div>
-        </div>
-
-        <!-- SNAKE DUEL PAGE -->
-        <div id="snakeDuel" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🐍 SNAKE DUEL</h1>
-                <p class="text-stone-400 text-sm">CLASSIC SNAKE, HEAD-TO-HEAD</p>
-            </div>
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="snakeStatus"></div>
-            </div>
-            <div class="flex justify-center my-8">
-                <canvas id="snakeDuelCanvas" width="800" height="600"></canvas>
-            </div>
-            <div class="snake-controls flex flex-col items-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8 space-y-4">
-                <div class="text-xl font-bold text-white mb-2">Controls:</div>
-                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
-                    <!-- Player 1 Controls -->
-                    <div class="flex flex-col items-center">
-                        <div class="text-lg font-semibold text-white mb-2">Player 1 (W/A/S/D)</div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="up1">W</button>
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="left1">A</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="down1">S</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="right1">D</button>
+                    <div>
+                        <label for="signinPassword" class="block text-sm font-medium text-white mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" id="signinPassword" name="password" required
+                                class="input-focus w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 transition-all duration-200 pr-12"
+                                placeholder="Enter your password">
+                            <button type="button" onclick="togglePassword('signinPassword')"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                    </path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
-                    <!-- Player 2 Controls -->
-                    <div class="flex flex-col items-center">
-                        <div class="text-lg font-semibold text-white mb-2">Player 2 (Arrows)</div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="up2">▲</button>
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="left2">◀</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="down2">▼</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="right2">▶</button>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" name="remember"
+                                class="w-4 h-4 text-blue-600 bg-white/10 border-white/20 rounded focus:ring-blue-500 focus:ring-2">
+                            <label for="remember" class="ml-2 text-sm text-white/90">Remember me</label>
                         </div>
+                        <button type="button" onclick="showPage('forgot')"
+                            class="text-sm text-blue-200 hover:text-blue-100 underline">
+                            Forgot password?
+                        </button>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-white text-purple-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                        Log In
+                    </button>
+                </form>
+
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-white/20"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-transparent text-white/80">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <button type="button" onclick="signinWithGoogle()"
+                            class="w-full inline-flex justify-center items-center px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-200 transform hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                            </svg>
+                            Google
+                        </button>
+
+                        <button type="button" onclick="signinWithGitHub()"
+                            class="w-full inline-flex justify-center items-center px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-all duration-200 transform hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                            GitHub
+                        </button>
                     </div>
                 </div>
-            </div>
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetSnakeDuel()">NEW GAME</button>
-            </div>
-        </div>
-        
-        <!-- 2048 PAGE -->
-        <div id="2048Game" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🔢 2048</h1>
-                <p class="text-stone-400 text-sm">SWIPE TO COMBINE NUMBERS</p>
-            </div>
 
-            <div class="game-status flex justify-between items-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="score2048">Score: 0</div>
-                <button class="bg-amber-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-amber-700 transition-colors" onclick="reset2048()">New Game</button>
-            </div>
 
-            <div class="flex justify-center my-8">
-                <div id="game2048Grid" class="game-2048-grid w-[470px] h-[470px]"></div>
-            </div>
-
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <p class="text-white">Use Arrow Keys to play!</p>
             </div>
         </div>
 
+        <div id="forgotPage" class="page fade-transition">
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Reset Password</h1>
+                    <p class="text-white/80">Enter your email to receive reset instructions</p>
+                </div>
+
+                <form id="forgotForm" class="space-y-6">
+                    <div>
+                        <label for="forgotEmail" class="block text-sm font-medium text-white mb-2">Email
+                            Address</label>
+                        <input type="email" id="forgotEmail" name="email" required
+                            class="input-focus w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 transition-all duration-200"
+                            placeholder="Enter your email address">
+                    </div>
+
+                    <div class="bg-white/5 border border-white/10 rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-5 h-5 text-blue-200 mt-0.5 flex-shrink-0" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <div class="text-sm text-white/80">
+                                We'll send you an email with instructions to reset your password. Check your spam folder
+                                if you don't see it in your inbox.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-white text-purple-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                        Send Reset Instructions
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-white/80">
+                        Remember your password?
+                        <button onclick="showPage('signin')"
+                            class="text-blue-200 hover:text-blue-100 underline font-medium">Log in</button>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Custom Alert Box -->
-    <div id="gameAlert" class="game-alert bg-stone-800 p-8 rounded-2xl shadow-2xl text-center text-white">
-        <div class="text-4xl font-extrabold mb-4" id="alertMessage"></div>
-    </div>
-
-    <script>
-        // Global Game State
-        let currentPlayer = 1;
-        let player1Score = 0;
-        let player2Score = 0;
-        let gameActive = false;
-        let snakeAnimationFrameId = null;
-
-        function setPlayerTurnBackground(gameId) {
-            document.body.classList.remove('bg-home');
-            document.body.classList.add(currentPlayer === 1 ? 'bg-player1' : 'bg-player2');
-        }
-
-        function setPlayerTurnColor(player) {
-            document.body.classList.remove('bg-player1', 'bg-player2', 'bg-home');
-            document.body.classList.add(player === 1 ? 'bg-player1' : 'bg-player2');
-        }
-
-        // Navigation
-        function showGame(gameId) {
-            // Stop any ongoing game loops
-            if (snakeAnimationFrameId) {
-                cancelAnimationFrame(snakeAnimationFrameId);
-                snakeAnimationFrameId = null;
-            }
-
-            document.getElementById('homePage').classList.add('hidden');
-            document.querySelectorAll('.game-page').forEach(page => page.classList.add('hidden'));
-            document.getElementById(gameId).classList.remove('hidden');
-            document.querySelector('.back-btn').classList.remove('hidden');
-
-            document.querySelector('.container').scrollIntoView({
-                behavior: 'auto',
-                block: 'start'
-            });
-
-            // Initialize specific games and set their backgrounds
-            if (gameId === 'ticTacToe') {
-                initializeTicTacToe();
-                setPlayerTurnColor(currentPlayer);
-            } else if (gameId === 'memoryGame') {
-                initializeMemoryGame();
-                setPlayerTurnColor(currentPlayer);
-            } else if (gameId === 'connectFour') {
-                initializeConnectFour();
-                setPlayerTurnColor(currentPlayer);
-            } else if (gameId === 'drawGuess') {
-                initializeDrawGuess();
-                setPlayerTurnColor(currentPlayer);
-            } else if (gameId === 'rockPaperScissors') {
-                initializeRPS();
-                setPlayerTurnColor(currentPlayer);
-            } else if (gameId === 'dotsAndBoxes') {
-                initializeDotsAndBoxes();
-                setPlayerTurnColor(currentPlayer);
-            } else if (gameId === 'snakeDuel') {
-                initializeSnakeDuel();
-                // Snake Duel's loop handles its own background color.
-            } else if (gameId === '2048Game') {
-                initialize2048();
-                document.body.classList.remove('bg-player1', 'bg-player2', 'bg-home');
-                document.body.classList.add('bg-2048');
-            }
-        }
-
-        function goHome() {
-            // Stop any ongoing game loops
-            if (snakeAnimationFrameId) {
-                cancelAnimationFrame(snakeAnimationFrameId);
-                snakeAnimationFrameId = null;
-            }
-            if (window.remove2048Listeners) {
-                window.remove2048Listeners();
-            }
-            document.querySelectorAll('.game-page').forEach(page => page.classList.add('hidden'));
-            document.getElementById('homePage').classList.remove('hidden');
-            document.querySelector('.back-btn').classList.add('hidden');
-            document.body.classList.remove('bg-player1', 'bg-player2', 'bg-2048');
-            document.body.classList.add('bg-home');
-        }
-
-        function updateScores() {
-            document.getElementById('player1Score').textContent = player1Score;
-            document.getElementById('player2Score').textContent = player2Score;
-        }
-
-        function showAlert(message, duration, callback) {
-            const alertBox = document.getElementById('gameAlert');
-            const alertMessage = document.getElementById('alertMessage');
-            alertMessage.textContent = message;
-            alertBox.style.display = 'flex';
-
-            setTimeout(() => {
-                alertBox.style.display = 'none';
-                if (callback) {
-                    callback();
-                }
-            }, duration);
-        }
-
-        function awardPoint(player) {
-            if (player === 1) player1Score++;
-            else player2Score++;
-            updateScores();
-        }
-
-        // TIC TAC TOE
-        let tttBoard = Array(9).fill('');
-        let tttGameActive = true;
-
-        function initializeTicTacToe() {
-            tttBoard = Array(9).fill('');
-            currentPlayer = 1;
-            tttGameActive = true;
-            updateTicTacToeStatus();
-
-            const board = document.getElementById('tttBoard');
-            board.innerHTML = '';
-
-            for (let i = 0; i < 9; i++) {
-                const cell = document.createElement('button');
-                cell.className = 'w-full h-24 bg-stone-700 rounded-lg text-4xl font-bold text-white transition-all duration-300 hover:bg-stone-600';
-                cell.dataset.index = i;
-                cell.onclick = () => handleTttClick(i, cell);
-                board.appendChild(cell);
-            }
-        }
-
-        function updateTicTacToeStatus() {
-            const nextSymbol = currentPlayer === 1 ? 'X' : 'O';
-            const statusText = `Player ${currentPlayer}'s Turn (${nextSymbol})`;
-            document.getElementById('tttStatus').textContent = statusText;
-            setPlayerTurnColor(currentPlayer);
-        }
-
-        function handleTttClick(index, cell) {
-            if (tttBoard[index] !== '' || !tttGameActive) return;
-
-            const symbol = currentPlayer === 1 ? 'X' : 'O';
-            tttBoard[index] = symbol;
-            cell.textContent = symbol;
-            cell.classList.add(currentPlayer === 1 ? 'text-amber-800' : 'text-stone-800');
-
-            if (checkTttWinner()) {
-                awardPoint(currentPlayer);
-                showAlert(`PLAYER ${currentPlayer} WINS! 🏆`, 3000, goHome);
-                tttGameActive = false;
-            } else if (tttBoard.every(cell => cell !== '')) {
-                showAlert('Draw! 🤝', 2000, initializeTicTacToe);
-                tttGameActive = false;
-            } else {
-                currentPlayer = currentPlayer === 1 ? 2 : 1;
-                updateTicTacToeStatus();
-            }
-        }
-
-        function checkTttWinner() {
-            const winPatterns = [
-                [0, 1, 2],
-                [3, 4, 5],
-                [6, 7, 8], // rows
-                [0, 3, 6],
-                [1, 4, 7],
-                [2, 5, 8], // columns
-                [0, 4, 8],
-                [2, 4, 6] // diagonals
-            ];
-
-            const symbol = currentPlayer === 1 ? 'X' : 'O';
-            return winPatterns.some(pattern =>
-                pattern.every(index => tttBoard[index] === symbol)
-            );
-        }
-
-        function resetTicTacToe() {
-            initializeTicTacToe();
-        }
-
-        // MEMORY GAME
-        const memoryIcons = ['🤖', '🛸', '🌍', '⭐', '🚀', '👽', '👾', '🪐'];
-        let memoryCards = [];
-        let flippedCards = [];
-        let memoryMatches = 0;
-
-        function initializeMemoryGame() {
-            memoryCards = [...memoryIcons, ...memoryIcons];
-            shuffleArray(memoryCards);
-            flippedCards = [];
-            memoryMatches = 0;
-            currentPlayer = 1;
-            updateMemoryGameStatus();
-
-            const board = document.getElementById('memoryBoard');
-            board.innerHTML = '';
-
-            memoryCards.forEach((icon, index) => {
-                const card = document.createElement('button');
-                card.className = 'w-full aspect-square bg-stone-700 rounded-lg flex items-center justify-center text-4xl font-bold text-stone-400 transition-all duration-300 hover:bg-stone-600';
-                card.dataset.index = index;
-                card.dataset.icon = icon;
-                card.textContent = '❓';
-                card.onclick = () => flipMemoryCard(card, index);
-                board.appendChild(card);
-            });
-        }
-
-        function updateMemoryGameStatus() {
-            setPlayerTurnColor(currentPlayer);
-            document.getElementById('memoryStatus').textContent = `Player ${currentPlayer}'s Turn`;
-        }
-
-        function flipMemoryCard(card, index) {
-            if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) return;
-
-            card.classList.add('flipped');
-            card.textContent = card.dataset.icon;
-            flippedCards.push({
-                card,
-                index,
-                icon: card.dataset.icon
-            });
-
-            if (flippedCards.length === 2) {
-                setTimeout(checkMemoryMatch, 1000);
-            }
-        }
-
-        function checkMemoryMatch() {
-            const [card1, card2] = flippedCards;
-
-            if (card1.icon === card2.icon) {
-                card1.card.classList.add('matched');
-                card2.card.classList.add('matched');
-                memoryMatches++;
-                awardPoint(currentPlayer);
-
-                if (memoryMatches === memoryIcons.length) {
-                    showAlert(`PLAYER ${currentPlayer} WINS! 🎉`, 3000, goHome);
-                }
-            } else {
-                card1.card.classList.remove('flipped');
-                card2.card.classList.remove('flipped');
-                card1.card.textContent = '❓';
-                card2.card.textContent = '❓';
-
-                currentPlayer = currentPlayer === 1 ? 2 : 1;
-            }
-            updateMemoryGameStatus();
-            flippedCards = [];
-        }
-
-        function resetMemoryGame() {
-            initializeMemoryGame();
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        // CONNECT 4
-        const CF_ROWS = 6;
-        const CF_COLS = 7;
-        let cfBoard;
-        let cfGameActive = true;
-
-        function initializeConnectFour() {
-            cfBoard = Array.from({
-                length: CF_ROWS
-            }, () => Array(CF_COLS).fill(0));
-            currentPlayer = 1;
-            cfGameActive = true;
-            renderConnectFourBoard();
-            updateConnectFourStatus();
-        }
-
-        function renderConnectFourBoard() {
-            const boardEl = document.getElementById('connectFourBoard');
-            boardEl.innerHTML = '';
-            for (let row = 0; row < CF_ROWS; row++) {
-                for (let col = 0; col < CF_COLS; col++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('connect-four-cell');
-                    cell.dataset.col = col;
-                    if (cfBoard[row][col] === 1) {
-                        cell.classList.add('player1-piece');
-                    } else if (cfBoard[row][col] === 2) {
-                        cell.classList.add('player2-piece');
-                    }
-                    cell.onclick = () => handleConnectFourClick(col);
-                    boardEl.appendChild(cell);
-                }
-            }
-        }
-
-        function updateConnectFourStatus() {
-            const statusText = `Player ${currentPlayer}'s Turn (${currentPlayer === 1 ? 'Yellow' : 'Red-Orange'})`;
-            document.getElementById('cfStatus').textContent = statusText;
-            setPlayerTurnColor(currentPlayer);
-        }
-
-        function handleConnectFourClick(col) {
-            if (!cfGameActive) return;
-
-            // Find the lowest empty row in the selected column
-            let row = -1;
-            for (let i = CF_ROWS - 1; i >= 0; i--) {
-                if (cfBoard[i][col] === 0) {
-                    row = i;
-                    break;
-                }
-            }
-
-            if (row !== -1) {
-                cfBoard[row][col] = currentPlayer;
-                renderConnectFourBoard();
-
-                if (checkConnectFourWinner(row, col)) {
-                    awardPoint(currentPlayer);
-                    showAlert(`PLAYER ${currentPlayer} WINS! 🎉`, 3000, goHome);
-                    cfGameActive = false;
-                } else if (cfBoard[0].every(cell => cell !== 0)) {
-                    showAlert('Draw! 🤝', 2000, initializeConnectFour);
-                    cfGameActive = false;
-                } else {
-                    currentPlayer = currentPlayer === 1 ? 2 : 1;
-                    updateConnectFourStatus();
-                }
-            }
-        }
-
-        function checkConnectFourWinner(row, col) {
-            const player = cfBoard[row][col];
-
-            // Check horizontal
-            let count = 0;
-            for (let c = 0; c < CF_COLS; c++) {
-                if (cfBoard[row][c] === player) {
-                    count++;
-                } else {
-                    count = 0;
-                }
-                if (count >= 4) return true;
-            }
-
-            // Check vertical
-            count = 0;
-            for (let r = 0; r < CF_ROWS; r++) {
-                if (cfBoard[r][col] === player) {
-                    count++;
-                } else {
-                    count = 0;
-                }
-                if (count >= 4) return true;
-            }
-
-            // Check diagonal (top-left to bottom-right)
-            count = 0;
-            let startRow = row - Math.min(row, col);
-            let startCol = col - Math.min(row, col);
-            while (startRow < CF_ROWS && startCol < CF_COLS) {
-                if (cfBoard[startRow][startCol] === player) {
-                    count++;
-                } else {
-                    count = 0;
-                }
-                if (count >= 4) return true;
-                startRow++;
-                startCol++;
-            }
-
-            // Check diagonal (bottom-left to top-right)
-            count = 0;
-            startRow = row + Math.min(CF_ROWS - 1 - row, col);
-            startCol = col - Math.min(CF_ROWS - 1 - row, col);
-            while (startRow >= 0 && startCol < CF_COLS) {
-                if (cfBoard[startRow][startCol] === player) {
-                    count++;
-                } else {
-                    count = 0;
-                }
-                if (count >= 4) return true;
-                startRow--;
-                startCol++;
-            }
-
-            return false;
-        }
-
-        function resetConnectFour() {
-            initializeConnectFour();
-        }
-
-        // DOTS AND BOXES
-        const DAB_GRID_SIZE = 10;
-        const DAB_BOX_SIZE = 50;
-        const DAB_OFFSET = 10;
-        const DAB_CLICK_TOLERANCE = 10;
-
-        let dabCanvas, dabCtx;
-        let dabBoard;
-        let dabGameActive = false;
-
-        function initializeDotsAndBoxes() {
-            dabCanvas = document.getElementById('dotBoxCanvas');
-            dabCtx = dabCanvas.getContext('2d');
-            dabCanvas.width = (DAB_GRID_SIZE - 1) * DAB_BOX_SIZE + DAB_OFFSET * 2;
-            dabCanvas.height = (DAB_GRID_SIZE - 1) * DAB_BOX_SIZE + DAB_OFFSET * 2;
-
-            dabBoard = {
-                lines: Array.from({
-                    length: DAB_GRID_SIZE
-                }, () => Array.from({
-                    length: DAB_GRID_SIZE
-                }, () => ({
-                    h: false,
-                    v: false
-                }))),
-                boxes: Array.from({
-                    length: DAB_GRID_SIZE - 1
-                }, () => Array(DAB_GRID_SIZE - 1).fill(0)),
-                player1Score: 0,
-                player2Score: 0
-            };
-
-            currentPlayer = 1;
-            dabGameActive = true;
-            updateDotsAndBoxesStatus();
-            drawDABBoard();
-
-            dabCanvas.addEventListener('click', handleDABClick);
-        }
-
-        function updateDotsAndBoxesStatus() {
-            setPlayerTurnColor(currentPlayer);
-            document.getElementById('dabStatus').textContent = `Player ${currentPlayer}'s Turn | Player 1: ${dabBoard.player1Score} | Player 2: ${dabBoard.player2Score}`;
-        }
-
-        function drawDABBoard() {
-            dabCtx.clearRect(0, 0, dabCanvas.width, dabCanvas.height);
-
-            // Draw dots
-            dabCtx.fillStyle = '#333';
-            for (let i = 0; i < DAB_GRID_SIZE; i++) {
-                for (let j = 0; j < DAB_GRID_SIZE; j++) {
-                    dabCtx.beginPath();
-                    dabCtx.arc(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE, 3, 0, Math.PI * 2);
-                    dabCtx.fill();
-                }
-            }
-
-            // Draw lines
-            dabCtx.strokeStyle = '#333';
-            dabCtx.lineWidth = 2;
-            for (let i = 0; i < DAB_GRID_SIZE; i++) {
-                for (let j = 0; j < DAB_GRID_SIZE; j++) {
-                    if (dabBoard.lines[i][j].h) {
-                        dabCtx.beginPath();
-                        dabCtx.moveTo(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE);
-                        dabCtx.lineTo(DAB_OFFSET + (j + 1) * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE);
-                        dabCtx.stroke();
-                    }
-                    if (dabBoard.lines[i][j].v) {
-                        dabCtx.beginPath();
-                        dabCtx.moveTo(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE);
-                        dabCtx.lineTo(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + (i + 1) * DAB_BOX_SIZE);
-                        dabCtx.stroke();
-                    }
-                }
-            }
-
-            // Draw filled boxes
-            for (let i = 0; i < DAB_GRID_SIZE - 1; i++) {
-                for (let j = 0; j < DAB_GRID_SIZE - 1; j++) {
-                    if (dabBoard.boxes[i][j] !== 0) {
-                        dabCtx.fillStyle = dabBoard.boxes[i][j] === 1 ? 'rgba(253, 224, 71, 0.5)' : 'rgba(234, 88, 12, 0.5)';
-                        dabCtx.fillRect(DAB_OFFSET + j * DAB_BOX_SIZE + 2, DAB_OFFSET + i * DAB_BOX_SIZE + 2, DAB_BOX_SIZE - 4, DAB_BOX_SIZE - 4);
-                    }
-                }
-            }
-        }
-
-        function handleDABClick(event) {
-            if (!dabGameActive) return;
-
-            const rect = dabCanvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            let lineClicked = false;
-            let nextPlayer = currentPlayer;
-
-            for (let i = 0; i < DAB_GRID_SIZE; i++) {
-                for (let j = 0; j < DAB_GRID_SIZE; j++) {
-                    const dotX = DAB_OFFSET + j * DAB_BOX_SIZE;
-                    const dotY = DAB_OFFSET + i * DAB_BOX_SIZE;
-
-                    // Check horizontal line
-                    if (i < DAB_GRID_SIZE && x > dotX - DAB_CLICK_TOLERANCE && x < dotX + DAB_BOX_SIZE + DAB_CLICK_TOLERANCE && Math.abs(y - dotY) < DAB_CLICK_TOLERANCE && !dabBoard.lines[i][j].h) {
-                        dabBoard.lines[i][j].h = true;
-                        if (!checkDABCompletion(i, j, 'h')) {
-                            nextPlayer = currentPlayer === 1 ? 2 : 1;
-                        }
-                        lineClicked = true;
-                        break;
-                    }
-                    // Check vertical line
-                    if (j < DAB_GRID_SIZE && y > dotY - DAB_CLICK_TOLERANCE && y < dotY + DAB_BOX_SIZE + DAB_CLICK_TOLERANCE && Math.abs(x - dotX) < DAB_CLICK_TOLERANCE && !dabBoard.lines[i][j].v) {
-                        dabBoard.lines[i][j].v = true;
-                        if (!checkDABCompletion(i, j, 'v')) {
-                            nextPlayer = currentPlayer === 1 ? 2 : 1;
-                        }
-                        lineClicked = true;
-                        break;
-                    }
-                }
-                if (lineClicked) break;
-            }
-
-            if (lineClicked) {
-                currentPlayer = nextPlayer;
-                drawDABBoard();
-                updateDotsAndBoxesStatus();
-            }
-
-            let totalBoxes = (DAB_GRID_SIZE - 1) * (DAB_GRID_SIZE - 1);
-            if (dabBoard.player1Score + dabBoard.player2Score === totalBoxes) {
-                endDABGame();
-            }
-        }
-
-        function checkDABCompletion(row, col, orientation) {
-            let boxCompleted = false;
-
-            // Check horizontal line completion
-            if (orientation === 'h') {
-                if (row > 0 && dabBoard.lines[row-1][col].h && dabBoard.lines[row][col].v && dabBoard.lines[row-1][col+1].v && dabBoard.boxes[row-1][col] === 0) {
-                    dabBoard.boxes[row-1][col] = currentPlayer;
-                    dabBoard[`player${currentPlayer}Score`]++;
-                    boxCompleted = true;
-                }
-                if (row < DAB_GRID_SIZE-1 && dabBoard.lines[row+1][col].h && dabBoard.lines[row][col].v && dabBoard.lines[row][col+1].v && dabBoard.boxes[row][col] === 0) {
-                    dabBoard.boxes[row][col] = currentPlayer;
-                    dabBoard[`player${currentPlayer}Score`]++;
-                    boxCompleted = true;
-                }
-            } 
-            
-            // Check vertical line completion
-            else if (orientation === 'v') {
-                 if (col > 0 && dabBoard.lines[row][col-1].v && dabBoard.lines[row][col].h && dabBoard.lines[row+1][col-1].h && dabBoard.boxes[row][col-1] === 0) {
-                    dabBoard.boxes[row][col-1] = currentPlayer;
-                    dabBoard[`player${currentPlayer}Score`]++;
-                    boxCompleted = true;
-                }
-                if (col < DAB_GRID_SIZE-1 && dabBoard.lines[row][col+1].v && dabBoard.lines[row][col].h && dabBoard.lines[row+1][col].h && dabBoard.boxes[row][col] === 0) {
-                    dabBoard.boxes[row][col] = currentPlayer;
-                    dabBoard[`player${currentPlayer}Score`]++;
-                    boxCompleted = true;
-                }
-            }
-
-            return boxCompleted;
-        }
-
-        function endDABGame() {
-            dabGameActive = false;
-            let winnerMessage = '';
-            if (dabBoard.player1Score > dabBoard.player2Score) {
-                awardPoint(1);
-                winnerMessage = 'Player 1 wins!';
-            } else if (dabBoard.player2Score > dabBoard.player1Score) {
-                awardPoint(2);
-                winnerMessage = 'Player 2 wins!';
-            } else {
-                winnerMessage = 'It\'s a tie!';
-            }
-            showAlert(winnerMessage, 3000, goHome);
-        }
-
-        function resetDotsAndBoxes() {
-            initializeDotsAndBoxes();
-        }
-
-
-        // SNAKE DUEL
-        const SD_WIDTH = 800;
-        const SD_HEIGHT = 600;
-        const SD_CELL_SIZE = 20;
-        let snakeCanvas, snakeCtx;
-        let snake1, snake2, food;
-        let snakeDirection1, snakeDirection2;
-        let snakeGameActive = false;
-        let snakeKeys = {};
-        
-        let control1 = {x: 70, y: 70, radius: 50};
-        let control2 = {x: SD_WIDTH - 70, y: SD_HEIGHT - 70, radius: 50};
-        let isDragging1 = false;
-        let isDragging2 = false;
-
-        function initializeSnakeDuel() {
-            snakeCanvas = document.getElementById('snakeDuelCanvas');
-            snakeCtx = snakeCanvas.getContext('2d');
-            
-            snake1 = [{ x: 40, y: 300 }];
-            snake2 = [{ x: 740, y: 300 }];
-            snakeDirection1 = 'right';
-            snakeDirection2 = 'left';
-
-            generateFood();
-            
-            document.getElementById('snakeStatus').textContent = `Player 1: Yellow | Player 2: Red-Orange`;
-            
-            window.addEventListener('keydown', handleSnakeKeyDown);
-            snakeCanvas.addEventListener('mousedown', handleMouseDown);
-            snakeCanvas.addEventListener('mousemove', handleMouseMove);
-            snakeCanvas.addEventListener('mouseup', handleMouseUp);
-
-            snakeCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-            snakeCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-            snakeCanvas.addEventListener('touchend', handleTouchEnd);
-            
-            snakeGameActive = true;
-            if (!snakeAnimationFrameId) {
-                gameLoopSnake();
-            }
-        }
-        
-        function handleMouseDown(e) {
-            const rect = snakeCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            const dist1 = Math.sqrt(Math.pow(x - control1.x, 2) + Math.pow(y - control1.y, 2));
-            const dist2 = Math.sqrt(Math.pow(x - control2.x, 2) + Math.pow(y - control2.y, 2));
-
-            if (dist1 < control1.radius) {
-                isDragging1 = true;
-            } else if (dist2 < control2.radius) {
-                isDragging2 = true;
-            }
-        }
-
-        function handleMouseMove(e) {
-            if (!isDragging1 && !isDragging2) return;
-            const rect = snakeCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            if (isDragging1) {
-                let dx = x - control1.x;
-                let dy = y - control1.y;
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    if (dx > 0) snakeDirection1 = 'right';
-                    else snakeDirection1 = 'left';
-                } else {
-                    if (dy > 0) snakeDirection1 = 'down';
-                    else snakeDirection1 = 'up';
-                }
-            } else if (isDragging2) {
-                let dx = x - control2.x;
-                let dy = y - control2.y;
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    if (dx > 0) snakeDirection2 = 'right';
-                    else snakeDirection2 = 'left';
-                } else {
-                    if (dy > 0) snakeDirection2 = 'down';
-                    else snakeDirection2 = 'up';
-                }
-            }
-        }
-        
-        function handleMouseUp() {
-            isDragging1 = false;
-            isDragging2 = false;
-        }
-
-        function handleTouchStart(e) {
-            e.preventDefault();
-            const rect = snakeCanvas.getBoundingClientRect();
-            const touch1 = e.touches[0];
-            const x1 = touch1.clientX - rect.left;
-            const y1 = touch1.clientY - rect.top;
-            
-            const dist1 = Math.sqrt(Math.pow(x1 - control1.x, 2) + Math.pow(y1 - control1.y, 2));
-            const dist2 = Math.sqrt(Math.pow(x1 - control2.x, 2) + Math.pow(y1 - control2.y, 2));
-
-            if (dist1 < control1.radius) {
-                isDragging1 = true;
-            } else if (dist2 < control2.radius) {
-                isDragging2 = true;
-            }
-        }
-
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!isDragging1 && !isDragging2) return;
-            const rect = snakeCanvas.getBoundingClientRect();
-            const touch1 = e.touches[0];
-            const x1 = touch1.clientX - rect.left;
-            const y1 = touch1.clientY - rect.top;
-            
-            if (isDragging1) {
-                let dx = x1 - control1.x;
-                let dy = y1 - control1.y;
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    if (dx > 0) snakeDirection1 = 'right';
-                    else snakeDirection1 = 'left';
-                } else {
-                    if (dy > 0) snakeDirection1 = 'down';
-                    else snakeDirection1 = 'up';
-                }
-            } else if (isDragging2) {
-                let dx = x1 - control2.x;
-                let dy = y1 - control2.y;
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    if (dx > 0) snakeDirection2 = 'right';
-                    else snakeDirection2 = 'left';
-                } else {
-                    if (dy > 0) snakeDirection2 = 'down';
-                    else snakeDirection2 = 'up';
-                }
-            }
-        }
-        
-        function handleTouchEnd() {
-            isDragging1 = false;
-            isDragging2 = false;
-        }
-
-
-        function handleSnakeKeyDown(e) {
-            if (!snakeGameActive) return;
-            const key = e.key.toLowerCase();
-
-            // Player 1 controls
-            if (key === 'w' && snakeDirection1 !== 'down') snakeDirection1 = 'up';
-            else if (key === 'a' && snakeDirection1 !== 'right') snakeDirection1 = 'left';
-            else if (key === 's' && snakeDirection1 !== 'up') snakeDirection1 = 'down';
-            else if (key === 'd' && snakeDirection1 !== 'left') snakeDirection1 = 'right';
-
-            // Player 2 controls
-            if (key === 'arrowup' && snakeDirection2 !== 'down') snakeDirection2 = 'up';
-            else if (key === 'arrowleft' && snakeDirection2 !== 'right') snakeDirection2 = 'left';
-            else if (key === 'arrowdown' && snakeDirection2 !== 'up') snakeDirection2 = 'down';
-            else if (key === 'arrowright' && snakeDirection2 !== 'left') snakeDirection2 = 'right';
-        }
-
-        function generateFood() {
-            food = {
-                x: Math.floor(Math.random() * (SD_WIDTH / SD_CELL_SIZE)) * SD_CELL_SIZE,
-                y: Math.floor(Math.random() * (SD_HEIGHT / SD_CELL_SIZE)) * SD_CELL_SIZE,
-            };
-        }
-
-        function drawSnake(snake, color) {
-            snake.forEach(segment => {
-                snakeCtx.fillStyle = color;
-                snakeCtx.fillRect(segment.x, segment.y, SD_CELL_SIZE, SD_CELL_SIZE);
-            });
-        }
-        
-        function drawControls() {
-            snakeCtx.beginPath();
-            snakeCtx.arc(control1.x, control1.y, control1.radius, 0, Math.PI * 2);
-            snakeCtx.strokeStyle = '#fde047';
-            snakeCtx.lineWidth = 4;
-            snakeCtx.stroke();
-            
-            snakeCtx.beginPath();
-            snakeCtx.arc(control2.x, control2.y, control2.radius, 0, Math.PI * 2);
-            snakeCtx.strokeStyle = '#ea580c';
-            snakeCtx.lineWidth = 4;
-            snakeCtx.stroke();
-        }
-
-        function updateSnake() {
-            // Update Player 1 snake
-            const head1 = { x: snake1[0].x, y: snake1[0].y };
-            if (snakeDirection1 === 'up') head1.y -= SD_CELL_SIZE;
-            else if (snakeDirection1 === 'down') head1.y += SD_CELL_SIZE;
-            else if (snakeDirection1 === 'left') head1.x -= SD_CELL_SIZE;
-            else if (snakeDirection1 === 'right') head1.x += SD_CELL_SIZE;
-            snake1.unshift(head1);
-
-            // Update Player 2 snake
-            const head2 = { x: snake2[0].x, y: snake2[0].y };
-            if (snakeDirection2 === 'up') head2.y -= SD_CELL_SIZE;
-            else if (snakeDirection2 === 'down') head2.y += SD_CELL_SIZE;
-            else if (snakeDirection2 === 'left') head2.x -= SD_CELL_SIZE;
-            else if (snakeDirection2 === 'right') head2.x += SD_CELL_SIZE;
-            snake2.unshift(head2);
-
-            // Check for food
-            if (head1.x === food.x && head1.y === food.y) {
-                generateFood();
-            } else {
-                snake1.pop();
-            }
-
-            if (head2.x === food.x && head2.y === food.y) {
-                generateFood();
-            } else {
-                snake2.pop();
-            }
-
-            // Check for collisions
-            const p1Lost = checkSnakeCollision(head1, snake1, snake2);
-            const p2Lost = checkSnakeCollision(head2, snake2, snake1);
-
-            if (p1Lost && p2Lost) {
-                showAlert('Draw! 🤝', 2000, goHome);
-                snakeGameActive = false;
-            } else if (p1Lost) {
-                awardPoint(2);
-                showAlert('Player 2 Wins! 🎉', 3000, goHome);
-                snakeGameActive = false;
-            } else if (p2Lost) {
-                awardPoint(1);
-                showAlert('Player 1 Wins! 🎉', 3000, goHome);
-                snakeGameActive = false;
-            }
-        }
-
-        function checkSnakeCollision(head, snake, otherSnake) {
-            // Wall collision
-            if (head.x < 0 || head.x >= SD_WIDTH || head.y < 0 || head.y >= SD_HEIGHT) {
-                return true;
-            }
-            // Self-collision
-            for (let i = 1; i < snake.length; i++) {
-                if (head.x === snake[i].x && head.y === snake[i].y) {
-                    return true;
-                }
-            }
-            // Opponent collision
-            for (let i = 0; i < otherSnake.length; i++) {
-                if (head.x === otherSnake[i].x && head.y === otherSnake[i].y) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function drawSnakeGame() {
-            snakeCtx.clearRect(0, 0, SD_WIDTH, SD_HEIGHT);
-            
-            drawSnake(snake1, '#fde047'); // Player 1
-            drawSnake(snake2, '#ea580c'); // Player 2
-            
-            snakeCtx.fillStyle = '#fff';
-            snakeCtx.fillRect(food.x, food.y, SD_CELL_SIZE, SD_CELL_SIZE);
-            
-            drawControls();
-        }
-
-        function gameLoopSnake() {
-            if (!snakeGameActive) {
-                return;
-            }
-            updateSnake();
-            drawSnakeGame();
-            snakeAnimationFrameId = setTimeout(() => {
-                requestAnimationFrame(gameLoopSnake);
-            }, 100);
-        }
-
-        function resetSnakeDuel() {
-            if (snakeAnimationFrameId) {
-                cancelAnimationFrame(snakeAnimationFrameId);
-                snakeAnimationFrameId = null;
-            }
-            initializeSnakeDuel();
-        }
-
-        // ROCK PAPER SCISSORS
-        const rpsChoices = {
-            rock: '🪨',
-            paper: '📄',
-            scissors: '✂️'
+    <script type="module">
+        // Import Firebase
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            GithubAuthProvider,
+            signInWithPopup,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            updateProfile // Import updateProfile to set the user's name
+        } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+        // ✅ Your Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9aEFfbFywAROOmFeV_03pxGXkJjjDPYE",
+            authDomain: "dsa-d95f4.firebaseapp.com",
+            projectId: "dsa-d95f4",
+            storageBucket: "dsa-d95f4.appspot.com",
+            messagingSenderId: "292765848857",
+            appId: "1:292765848857:web:b87df6eaa31c9ae9a7a188",
+            measurementId: "G-P7MVMW71TF"
         };
 
-        let rpsRound = 1;
-        let rpsMaxRounds = 1;
-        let player1Choice = null;
-        let player2Choice = null;
-        let rpsPlayer1Wins = 0;
-        let rpsPlayer2Wins = 0;
+        // 🔹 Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
-        function initializeRPS() {
-            rpsRound = 1;
-            player1Choice = null;
-            player2Choice = null;
-            rpsPlayer1Wins = 0;
-            rpsPlayer2Wins = 0;
-            updateRPSStatus();
+        // =================================
+        // === UI & HELPER FUNCTIONS ===
+        // =================================
 
-            document.getElementById('player1Choice').textContent = '?';
-            document.getElementById('player2Choice').textContent = '?';
-            document.getElementById('roundResult').textContent = 'Make your choices!';
-            document.getElementById('rpsNextBtn').classList.add('hidden');
-
-            document.querySelectorAll('.rps-btn').forEach(btn => btn.disabled = false);
+        // Page navigation
+        function showPage(pageType) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('[id$="Tab"]').forEach(tab => {
+                tab.classList.remove('bg-white', 'text-purple-700');
+                tab.classList.add('text-white', 'hover:bg-white/10');
+            });
+            document.getElementById(pageType + 'Page').classList.add('active');
+            const activeTab = document.getElementById(pageType + 'Tab');
+            activeTab.classList.add('bg-white', 'text-purple-700');
+            activeTab.classList.remove('text-white', 'hover:bg-white/10');
+            hideMessages();
         }
 
-        function updateRPSStatus() {
-            setPlayerTurnColor(currentPlayer);
-            document.getElementById('rpsStatus').textContent = 'Single Round Showdown';
+        // Message functions
+        let messageTimeout;
+
+        function showMessage(type, text) {
+            clearTimeout(messageTimeout);
+            hideMessages();
+            const messageEl = document.getElementById(type + 'Message');
+            const textEl = document.getElementById(type + 'Text');
+            textEl.textContent = text;
+            messageEl.style.display = 'block';
+            messageTimeout = setTimeout(hideMessages, 5000);
         }
 
-        function makeChoice(player, choice) {
-            if (player === 1) {
-                player1Choice = choice;
-                document.getElementById('player1Choice').textContent = rpsChoices[choice];
-            } else {
-                player2Choice = choice;
-                document.getElementById('player2Choice').textContent = rpsChoices[choice];
-            }
-
-            const playerButtons = document.querySelectorAll(`.player-choice:nth-child(${player === 1 ? 1 : 3}) .rps-btn`);
-            playerButtons.forEach(btn => btn.disabled = true);
-
-            if (player1Choice && player2Choice) {
-                setTimeout(evaluateRound, 1000);
-            }
+        function hideMessages() {
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
         }
 
-        function evaluateRound() {
-            let result = '';
-            let winner = null;
-
-            if (player1Choice === player2Choice) {
-                result = "It's a tie!";
-                showAlert(result, 3000, initializeRPS); // Restart on tie
-            } else if (
-                (player1Choice === 'rock' && player2Choice === 'scissors') ||
-                (player1Choice === 'paper' && player2Choice === 'rock') ||
-                (player1Choice === 'scissors' && player2Choice === 'paper')
-            ) {
-                result = 'Player 1 wins!';
-                winner = 1;
-                awardPoint(winner);
-                showAlert(`PLAYER ${winner} WINS! 🎉`, 3000, goHome);
-            } else {
-                result = 'Player 2 wins!';
-                winner = 2;
-                awardPoint(winner);
-                showAlert(`PLAYER ${winner} WINS! 🎉`, 3000, goHome);
-            }
-
-            document.getElementById('roundResult').textContent = result;
-            document.getElementById('rpsNextBtn').classList.remove('hidden');
-
+        // Password toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
         }
 
-        function nextRPSRound() {
-            rpsRound++;
-            player1Choice = null;
-            player2Choice = null;
-            updateRPSStatus();
+        // --- Make UI functions globally accessible for HTML onclick attributes ---
+        window.showPage = showPage;
+        window.togglePassword = togglePassword;
 
-            document.getElementById('player1Choice').textContent = '?';
-            document.getElementById('player2Choice').textContent = '?';
-            document.getElementById('roundResult').textContent = 'Make your choices!';
-            document.getElementById('rpsNextBtn').classList.add('hidden');
+        // =================================
+        // === FIREBASE AUTHENTICATION LOGIC ===
+        // =================================
 
-            document.querySelectorAll('.rps-btn').forEach(btn => btn.disabled = false);
-        }
-
-        function resetRPS() {
-            initializeRPS();
-        }
-
-        // DRAW & GUESS
-        const drawPrompts = ['ROBOT', 'SPACESHIP', 'PIXEL', 'ARCADE', 'NEON', 'CYBER', 'MATRIX', 'DIGITAL'];
-        let canvas, ctx;
-        let isDrawing = false;
-        let currentColor = '#000000';
-        let currentLineWidth = 4;
-
-        function initializeDrawGuess() {
-            canvas = document.getElementById('drawCanvas');
-            ctx = canvas.getContext('2d');
-
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
-
-            // Touch events
-            canvas.addEventListener('touchstart', handleTouch);
-            canvas.addEventListener('touchmove', handleTouch);
-            canvas.addEventListener('touchend', stopDrawing);
-
-            ctx.lineWidth = currentLineWidth;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = currentColor;
-
-            newDrawPrompt();
-        }
-
-        function startDrawing(e) {
-            isDrawing = true;
-            const rect = canvas.getBoundingClientRect();
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-        }
-
-        function draw(e) {
-            if (!isDrawing) return;
-            const rect = canvas.getBoundingClientRect();
-            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-            ctx.stroke();
-        }
-
-        function stopDrawing() {
-            isDrawing = false;
-        }
-
-        function handleTouch(e) {
+        // --- Sign Up with Email ---
+        document.getElementById("signupForm").addEventListener("submit", function (e) {
             e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' :
-                e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
+            const fullName = document.getElementById("signupFullName").value.trim();
+            const email = document.getElementById("signupEmail").value.trim();
+            const password = document.getElementById("signupPassword").value.trim();
+
+            // Validation
+            if (!fullName || !email || !password) {
+                return showMessage("error", "Please fill in all required fields.");
+            }
+            if (password.length < 6) {
+                return showMessage("error", "Password must be at least 6 characters long.");
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Set the user's display name
+                    return updateProfile(userCredential.user, {
+                        displayName: fullName
+                    });
+                })
+                .then(() => {
+                    showMessage("success", `Account created! Welcome, ${fullName}! 🎉`);
+                    this.reset();
+                    setTimeout(() => showPage('signin'), 2000); // Switch to login after 2s
+                })
+                .catch((error) => {
+                    showMessage("error", "❌ " + error.message);
                 });
-            canvas.dispatchEvent(mouseEvent);
-        }
+        });
 
-        function clearCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function setDrawColor(color, lineWidth) {
-            currentColor = color;
-            currentLineWidth = lineWidth;
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentLineWidth;
-        }
-
-        function newDrawPrompt() {
-            const prompt = drawPrompts[Math.floor(Math.random() * drawPrompts.length)];
-            document.getElementById('drawPrompt').textContent = `Draw: ${prompt}`;
-            clearCanvas();
-        }
-
-        function nextDrawRound() {
-            currentPlayer = currentPlayer === 1 ? 2 : 1;
-            document.getElementById('drawStatus').textContent = `Player ${currentPlayer}'s Turn to Draw`;
-            newDrawPrompt();
-        }
-
-        function resetDrawGame() {
-            currentPlayer = 1;
-            document.getElementById('drawStatus').textContent = 'Player 1\'s Turn to Draw';
-            newDrawPrompt();
-        }
-
-        // 2048 Game
-        const GRID_SIZE = 4;
-        let game2048Board;
-        let game2048Score;
-        let game2048Active = false;
-
-        function initialize2048() {
-            game2048Board = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
-            game2048Score = 0;
-            update2048Score();
-            game2048Active = true;
-            addRandomTile();
-            addRandomTile();
-            draw2048Board();
-            window.addEventListener('keydown', handle2048KeyDown);
-            document.getElementById('game2048Grid').addEventListener('touchstart', handle2048TouchStart);
-            document.getElementById('game2048Grid').addEventListener('touchmove', handle2048TouchMove);
-            document.getElementById('game2048Grid').addEventListener('touchend', handle2048TouchEnd);
-            window.remove2048Listeners = () => {
-                window.removeEventListener('keydown', handle2048KeyDown);
-                document.getElementById('game2048Grid').removeEventListener('touchstart', handle2048TouchStart);
-                document.getElementById('game2048Grid').removeEventListener('touchmove', handle2048TouchMove);
-                document.getElementById('game2048Grid').removeEventListener('touchend', handle2048TouchEnd);
-            };
-        }
-
-        function update2048Score() {
-            document.getElementById('score2048').textContent = `Score: ${game2048Score}`;
-        }
-
-        function draw2048Board() {
-            const gridEl = document.getElementById('game2048Grid');
-            gridEl.innerHTML = '';
-            for (let i = 0; i < GRID_SIZE; i++) {
-                for (let j = 0; j < GRID_SIZE; j++) {
-                    const tileValue = game2048Board[i][j];
-                    const tileEl = document.createElement('div');
-                    tileEl.classList.add('game-2048-cell');
-                    if (tileValue > 0) {
-                        tileEl.textContent = tileValue;
-                        tileEl.classList.add(`tile-${tileValue}`);
-                    }
-                    gridEl.appendChild(tileEl);
-                }
-            }
-        }
-
-        function addRandomTile() {
-            const emptyTiles = [];
-            for (let i = 0; i < GRID_SIZE; i++) {
-                for (let j = 0; j < GRID_SIZE; j++) {
-                    if (game2048Board[i][j] === 0) {
-                        emptyTiles.push({ i, j });
-                    }
-                }
-            }
-            if (emptyTiles.length > 0) {
-                const randomSpot = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-                game2048Board[randomSpot.i][randomSpot.j] = Math.random() < 0.9 ? 2 : 4;
-            }
-        }
-        
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        function handle2048TouchStart(e) {
+        // --- Sign In with Email ---
+        document.getElementById("signinForm").addEventListener("submit", function (e) {
             e.preventDefault();
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-        }
+            const email = document.getElementById("signinEmail").value.trim();
+            const password = document.getElementById("signinPassword").value.trim();
 
-        function handle2048TouchMove(e) {
-            e.preventDefault(); // Prevents page scrolling
-        }
-
-        function handle2048TouchEnd(e) {
-            if (!game2048Active) return;
-
-            const touch = e.changedTouches[0];
-            const dx = touch.clientX - touchStartX;
-            const dy = touch.clientY - touchStartY;
-            const minSwipeDistance = 30;
-
-            let moved = false;
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > minSwipeDistance) {
-                if (dx > 0) {
-                    moved = slideTilesRight();
-                } else {
-                    moved = slideTilesLeft();
-                }
-            } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > minSwipeDistance) {
-                if (dy > 0) {
-                    moved = slideTilesDown();
-                } else {
-                    moved = slideTilesUp();
-                }
+            if (!email || !password) {
+                return showMessage("error", "Please enter both email and password.");
             }
-            
-            if (moved) {
-                addRandomTile();
-                draw2048Board();
-                if (check2048GameOver()) {
-                    showAlert('Game Over!', 3000, goHome);
-                    game2048Active = false;
-                }
-            }
-        }
 
-        function handle2048KeyDown(event) {
-            if (!game2048Active) return;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    const displayName = user.displayName || user.email;
+                    window.location.href = "home.html";
 
-            let moved = false;
-            switch (event.key) {
-                case 'ArrowUp':
-                    moved = slideTilesUp();
-                    break;
-                case 'ArrowDown':
-                    moved = slideTilesDown();
-                    break;
-                case 'ArrowLeft':
-                    moved = slideTilesLeft();
-                    break;
-                case 'ArrowRight':
-                    moved = slideTilesRight();
-                    break;
-            }
-            if (moved) {
-                addRandomTile();
-                draw2048Board();
-                if (check2048GameOver()) {
-                    showAlert('Game Over!', 3000, goHome);
-                    game2048Active = false;
-                }
-            }
-        }
 
-        function slideTilesUp() {
-            let moved = false;
-            for (let j = 0; j < GRID_SIZE; j++) {
-                const column = game2048Board.map(row => row[j]);
-                const newColumn = slide(column);
-                for (let i = 0; i < GRID_SIZE; i++) {
-                    if (game2048Board[i][j] !== newColumn[i]) {
-                        game2048Board[i][j] = newColumn[i];
-                        moved = true;
-                    }
-                }
-            }
-            return moved;
-        }
+                    console.log("Login successful, would redirect to home.html");
+                    // setTimeout(() => { window.location.href = "home.html"; }, 2000);
+                })
+                .catch((error) => {
+                    showMessage("error", "❌ " + error.message);
+                });
+        });
 
-        function slideTilesDown() {
-            let moved = false;
-            for (let j = 0; j < GRID_SIZE; j++) {
-                const column = game2048Board.map(row => row[j]).reverse();
-                const newColumn = slide(column);
-                for (let i = 0; i < GRID_SIZE; i++) {
-                    if (game2048Board[i][j] !== newColumn[GRID_SIZE - 1 - i]) {
-                        game2048Board[i][j] = newColumn[GRID_SIZE - 1 - i];
-                        moved = true;
-                    }
-                }
-            }
-            return moved;
-        }
+        // --- Forgot Password ---
+        document.getElementById("forgotForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const email = document.getElementById("forgotEmail").value.trim();
 
-        function slideTilesLeft() {
-            let moved = false;
-            for (let i = 0; i < GRID_SIZE; i++) {
-                const row = game2048Board[i];
-                const newRow = slide(row);
-                if (JSON.stringify(row) !== JSON.stringify(newRow)) {
-                    game2048Board[i] = newRow;
-                    moved = true;
-                }
+            if (!email) {
+                return showMessage("error", "Please enter your email address.");
             }
-            return moved;
-        }
 
-        function slideTilesRight() {
-            let moved = false;
-            for (let i = 0; i < GRID_SIZE; i++) {
-                const row = game2048Board[i].slice().reverse();
-                const newRow = slide(row).reverse();
-                if (JSON.stringify(game2048Board[i]) !== JSON.stringify(newRow)) {
-                    game2048Board[i] = newRow;
-                    moved = true;
-                }
-            }
-            return moved;
-        }
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    showMessage("success", "✅ Reset email sent! Please check your inbox.");
+                    this.reset();
+                })
+                .catch((error) => {
+                    showMessage("error", "❌ " + error.message);
+                });
+        });
 
-        function slide(array) {
-            let filtered = array.filter(val => val !== 0);
-            for (let i = 0; i < filtered.length - 1; i++) {
-                if (filtered[i] === filtered[i + 1]) {
-                    filtered[i] *= 2;
-                    game2048Score += filtered[i];
-                    filtered.splice(i + 1, 1);
-                    filtered.push(0);
-                    update2048Score();
-                }
-            }
-            while (filtered.length < GRID_SIZE) {
-                filtered.push(0);
-            }
-            return filtered;
-        }
+        // --- Social Logins (Google & GitHub) ---
+        const handleSocialLogin = (provider) => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    window.location.href = "home.html";
 
-        function check2048GameOver() {
-            for (let i = 0; i < GRID_SIZE; i++) {
-                for (let j = 0; j < GRID_SIZE; j++) {
-                    if (game2048Board[i][j] === 0) {
-                        return false;
-                    }
-                    if (j < GRID_SIZE - 1 && game2048Board[i][j] === game2048Board[i][j + 1]) {
-                        return false;
-                    }
-                    if (i < GRID_SIZE - 1 && game2048Board[i][j] === game2048Board[i + 1][j]) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
+                    console.log("Social login successful, would redirect to home.html");
+                    // setTimeout(() => { window.location.href = "home.html"; }, 2000);
+                })
+                .catch((error) => {
+                    showMessage("error", "❌ " + error.message);
+                });
+        };
 
-        function reset2048() {
-            initialize2048();
-        }
+        window.signinWithGoogle = () => handleSocialLogin(new GoogleAuthProvider());
+        window.signinWithGitHub = () => handleSocialLogin(new GithubAuthProvider());
 
-        // Initialize
-        updateScores();
-    </script>
+        // Reuse the same handlers for the Sign Up page buttons
+        window.signupWithGoogle = window.signinWithGoogle;
+        window.signupWithGitHub = window.signinWithGitHub;
+
+        // --- Initialize the default page view ---
+        showPage('signup');
+    </script>   
 </body>
 
 </html>
