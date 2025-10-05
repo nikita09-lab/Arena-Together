@@ -323,36 +323,12 @@
             </div>
         </div>
 
-        <!-- DRAW & GUESS PAGE -->
-        <div id="drawGuess" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🎨 DRAW & GUESS</h1>
-                <p class="text-stone-400 text-sm">PIXEL BRUSH ARENA</p>
-            </div>
-
+    
             <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
                 <div class="text-xl font-bold text-white mb-2" id="drawStatus">Player 1's Turn to Draw</div>
                 <div class="text-sm text-stone-400" id="drawPrompt">Draw: ROBOT</div>
             </div>
 
-            <div class="draw-container max-w-4xl mx-auto p-6">
-                <div class="canvas-area text-center mb-6">
-                    <canvas id="drawCanvas" class="bg-stone-800 rounded-xl border border-stone-600 shadow-xl" width="800" height="600"></canvas>
-                </div>
-
-                <div class="drawing-tools flex justify-center gap-4 flex-wrap">
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="setDrawColor('#000000', 4)">Draw</button>
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="setDrawColor('#1f2937', 20)">Eraser</button>
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="clearCanvas()">Clear</button>
-                    <input type="color" class="w-10 h-10 rounded-full cursor-pointer" oninput="setDrawColor(this.value, 4)">
-                </div>
-            </div>
-
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="nextDrawRound()">NEXT ROUND</button>
-                <button class="bg-stone-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-stone-600 transition-colors" onclick="resetDrawGame()">NEW GAME</button>
-            </div>
-        </div>
 
         <!-- TIC TAC TOE PAGE -->
         <div id="ticTacToe" class="game-page hidden">
@@ -452,50 +428,6 @@
             </div>
         </div>
 
-        <!-- DOTS AND BOXES PAGE -->
-        <div id="dotsAndBoxes" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">◻️ DOTS AND BOXES</h1>
-                <p class="text-stone-400 text-sm">CLAIM BOXES TO WIN</p>
-            </div>
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="dabStatus">Player 1's Turn</div>
-            </div>
-            <div class="flex justify-center my-8">
-                <canvas id="dotBoxCanvas" width="600" height="600"></canvas>
-            </div>
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetDotsAndBoxes()">NEW GAME</button>
-            </div>
-        </div>
-
-        <!-- SNAKE DUEL PAGE -->
-        <div id="snakeDuel" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🐍 SNAKE DUEL</h1>
-                <p class="text-stone-400 text-sm">CLASSIC SNAKE, HEAD-TO-HEAD</p>
-            </div>
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="snakeStatus"></div>
-            </div>
-            <div class="flex justify-center my-8">
-                <canvas id="snakeDuelCanvas" width="800" height="600"></canvas>
-            </div>
-            <div class="snake-controls flex flex-col items-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8 space-y-4">
-                <div class="text-xl font-bold text-white mb-2">Controls:</div>
-                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
-                    <!-- Player 1 Controls -->
-                    <div class="flex flex-col items-center">
-                        <div class="text-lg font-semibold text-white mb-2">Player 1 (W/A/S/D)</div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="up1">W</button>
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="left1">A</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="down1">S</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="right1">D</button>
-                        </div>
-                    </div>
                     <!-- Player 2 Controls -->
                     <div class="flex flex-col items-center">
                         <div class="text-lg font-semibold text-white mb-2">Player 2 (Arrows)</div>
