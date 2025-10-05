@@ -264,99 +264,57 @@ background-color: #edc22e;
 </div>
 
 <div class="games-grid grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('drawGuess')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">🎨</div>
-<div class="text-xl font-bold text-white mb-2">Draw & Guess</div>
-<div class="text-sm text-stone-400">One player draws, the other guesses.</div>
+  <!-- Two Player Games Category -->
+  <div class="col-span-full mb-2">
+    <div class="text-lg font-bold text-stone-700 bg-stone-200 rounded-xl px-4 py-2 inline-block">Two Player Games</div>
+  </div>
+  <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('ticTacToe')">
+    <div class="game-card-content">
+      <div class="text-4xl mb-4">⚡</div>
+      <div class="text-xl font-bold text-white mb-2">Tic Tac Toe</div>
+      <div class="text-sm text-stone-400">Classic strategy with a minimal style.</div>
+    </div>
+  </div>
+  <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('rockPaperScissors')">
+    <div class="game-card-content">
+      <div class="text-4xl mb-4">✂️</div>
+      <div class="text-xl font-bold text-white mb-2">Rock Paper Scissors</div>
+      <div class="text-sm text-stone-400">Classic hand game, digital style.</div>
+    </div>
+  </div>
+  <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('memoryGame')">
+    <div class="game-card-content">
+      <div class="text-4xl mb-4">🧠</div>
+      <div class="text-xl font-bold text-white mb-2">Memory Game</div>
+      <div class="text-sm text-stone-400">Find matching pairs to score points.</div>
+    </div>
+  </div>
+  <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('connectFour')">
+    <div class="game-card-content">
+      <div class="text-4xl mb-4">🟡</div>
+      <div class="text-xl font-bold text-white mb-2">Connect 4</div>
+      <div class="text-sm text-stone-400">Strategy to connect four pieces.</div>
+    </div>
+  </div>
 </div>
-</div>
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('ticTacToe')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">⚡</div>
-<div class="text-xl font-bold text-white mb-2">Tic Tac Toe</div>
-<div class="text-sm text-stone-400">Classic strategy with a minimal style.</div>
-</div>
-</div>
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('rockPaperScissors')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">✂️</div>
-<div class="text-xl font-bold text-white mb-2">Rock Paper Scissors</div>
-<div class="text-sm text-stone-400">Classic hand game, digital style.</div>
-</div>
-</div>
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('memoryGame')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">🧠</div>
-<div class="text-xl font-bold text-white mb-2">Memory Game</div>
-<div class="text-sm text-stone-400">Find matching pairs to score points.</div>
-</div>
-</div>
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('connectFour')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">🟡</div>
-<div class="text-xl font-bold text-white mb-2">Connect 4</div>
-<div class="text-sm text-stone-400">Strategy to connect four pieces.</div>
-</div>
-</div>
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('dotsAndBoxes')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">◻️</div>
-<div class="text-xl font-bold text-white mb-2">Dots and Boxes</div>
-<div class="text-sm text-stone-400">Claim boxes to win.</div>
-</div>
-</div>
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('snakeDuel')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">🐍</div>
-<div class="text-xl font-bold text-white mb-2">Snake Duel</div>
-<div class="text-sm text-stone-400">Classic snake, head-to-head.</div>
-</div>
-</div>
-<div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('2048Game')">
-<div class="game-card-content">
-<div class="text-4xl mb-4">🔢</div>
-<div class="text-xl font-bold text-white mb-2">2048</div>
-<div class="text-sm text-stone-400">Swipe to combine numbers.</div>
-</div>
-</div>
+
+<!-- One Player Games Category -->
+<div class="games-grid grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 mt-8">
+  <div class="col-span-full mb-2">
+    <div class="text-lg font-bold text-stone-700 bg-stone-200 rounded-xl px-4 py-2 inline-block">One Player Games</div>
+  </div>
+  <div class="game-card bg-stone-800 rounded-xl p-6 text-center shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl cursor-pointer" onclick="showGame('2048Game')">
+    <div class="game-card-content">
+      <div class="text-4xl mb-4">🔢</div>
+      <div class="text-xl font-bold text-white mb-2">2048</div>
+      <div class="text-sm text-stone-400">Swipe to combine numbers.</div>
+    </div>
+  </div>
 </div>
 </div>
 
-        <!-- DRAW & GUESS PAGE -->
-        <div id="drawGuess" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🎨 DRAW & GUESS</h1>
-                <p class="text-stone-400 text-sm">PIXEL BRUSH ARENA</p>
-            </div>
-
-    
-<div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-<div class="text-xl font-bold text-white mb-2" id="drawStatus">Player 1's Turn to Draw</div>
-<div class="text-sm text-stone-400" id="drawPrompt">Draw: ROBOT</div>
-</div>
-
-            <div class="draw-container max-w-4xl mx-auto p-6">
-                <div class="canvas-area text-center mb-6">
-                    <canvas id="drawCanvas" class="bg-stone-800 rounded-xl border border-stone-600 shadow-xl" width="800" height="600"></canvas>
-                </div>
-
-                <div class="drawing-tools flex justify-center gap-4 flex-wrap">
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="setDrawColor('#000000', 4)">Draw</button>
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="setDrawColor('#1f2937', 20)">Eraser</button>
-                    <button class="bg-stone-700 text-white font-medium py-2 px-4 rounded-full shadow-lg hover:bg-stone-600 transition-colors" onclick="clearCanvas()">Clear</button>
-                    <input type="color" class="w-10 h-10 rounded-full cursor-pointer" oninput="setDrawColor(this.value, 4)">
-                </div>
-            </div>
-
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="nextDrawRound()">NEXT ROUND</button>
-                <button class="bg-stone-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-stone-600 transition-colors" onclick="resetDrawGame()">NEW GAME</button>
-            </div>
-        </div>
-
-<!-- TIC TAC TOE PAGE -->
-<div id="ticTacToe" class="game-page hidden">
+        <!-- TIC TAC TOE PAGE -->
+        <div id="ticTacToe" class="game-page hidden">
 <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
 <h1 class="text-3xl font-bold text-white mb-2">⚡ TIC TAC TOE</h1>
 <p class="text-stone-400 text-sm">GEOMETRIC WARFARE</p>
@@ -453,70 +411,7 @@ background-color: #edc22e;
 </div>
 </div>
 
-        <!-- DOTS AND BOXES PAGE -->
-        <div id="dotsAndBoxes" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">◻️ DOTS AND BOXES</h1>
-                <p class="text-stone-400 text-sm">CLAIM BOXES TO WIN</p>
-            </div>
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="dabStatus">Player 1's Turn</div>
-            </div>
-            <div class="flex justify-center my-8">
-                <canvas id="dotBoxCanvas" width="600" height="600"></canvas>
-            </div>
-            <div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetDotsAndBoxes()">NEW GAME</button>
-            </div>
-        </div>
-
-        <!-- SNAKE DUEL PAGE -->
-        <div id="snakeDuel" class="game-page hidden">
-            <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
-                <h1 class="text-3xl font-bold text-white mb-2">🐍 SNAKE DUEL</h1>
-                <p class="text-stone-400 text-sm">CLASSIC SNAKE, HEAD-TO-HEAD</p>
-            </div>
-            <div class="game-status text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-                <div class="text-xl font-bold text-white mb-2" id="snakeStatus"></div>
-            </div>
-            <div class="flex justify-center my-8">
-                <canvas id="snakeDuelCanvas" width="800" height="600"></canvas>
-            </div>
-            <div class="snake-controls flex flex-col items-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8 space-y-4">
-                <div class="text-xl font-bold text-white mb-2">Controls:</div>
-                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
-                    <!-- Player 1 Controls -->
-                    <div class="flex flex-col items-center">
-                        <div class="text-lg font-semibold text-white mb-2">Player 1 (W/A/S/D)</div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="up1">W</button>
-                            <div></div>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="left1">A</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="down1">S</button>
-                            <button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="right1">D</button>
-                        </div>
-                    </div>
-<!-- Player 2 Controls -->
-<div class="flex flex-col items-center">
-<div class="text-lg font-semibold text-white mb-2">Player 2 (Arrows)</div>
-<div class="grid grid-cols-3 gap-2">
-<div></div>
-<button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="up2">▲</button>
-<div></div>
-<button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="left2">◀</button>
-<button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="down2">▼</button>
-<button class="control-btn p-4 bg-stone-700 text-white rounded-lg shadow-md" data-dir="right2">▶</button>
-</div>
-</div>
-</div>
-</div>
-<div class="game-controls text-center p-6 bg-stone-800 rounded-xl shadow-lg mt-8">
-<button class="bg-amber-600 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:bg-amber-700 transition-colors" onclick="resetSnakeDuel()">NEW GAME</button>
-</div>
-</div>
-
-<!-- 2048 PAGE -->
+        <!-- 2048 PAGE -->
 <div id="2048Game" class="game-page hidden">
 <div class="game-header text-center p-8 bg-stone-800 rounded-b-xl shadow-lg">
 <h1 class="text-3xl font-bold text-white mb-2">🔢 2048</h1>
@@ -550,7 +445,6 @@ let currentPlayer = 1;
 let player1Score = 0;
 let player2Score = 0;
 let gameActive = false;
-let snakeAnimationFrameId = null;
 
 function setPlayerTurnBackground(gameId) {
 document.body.classList.remove('bg-home');
@@ -590,18 +484,9 @@ setPlayerTurnColor(currentPlayer);
 } else if (gameId === 'connectFour') {
 initializeConnectFour();
 setPlayerTurnColor(currentPlayer);
-} else if (gameId === 'drawGuess') {
-initializeDrawGuess();
-setPlayerTurnColor(currentPlayer);
 } else if (gameId === 'rockPaperScissors') {
 initializeRPS();
 setPlayerTurnColor(currentPlayer);
-} else if (gameId === 'dotsAndBoxes') {
-initializeDotsAndBoxes();
-setPlayerTurnColor(currentPlayer);
-} else if (gameId === 'snakeDuel') {
-initializeSnakeDuel();
-// Snake Duel's loop handles its own background color.
 } else if (gameId === '2048Game') {
 initialize2048();
 document.body.classList.remove('bg-player1', 'bg-player2', 'bg-home');
@@ -939,672 +824,6 @@ function resetConnectFour() {
 initializeConnectFour();
 }
 
-// DOTS AND BOXES
-const DAB_GRID_SIZE = 10;
-const DAB_BOX_SIZE = 50;
-const DAB_OFFSET = 10;
-const DAB_CLICK_TOLERANCE = 10;
-
-let dabCanvas, dabCtx;
-let dabBoard;
-let dabGameActive = false;
-
-function initializeDotsAndBoxes() {
-dabCanvas = document.getElementById('dotBoxCanvas');
-dabCtx = dabCanvas.getContext('2d');
-dabCanvas.width = (DAB_GRID_SIZE - 1) * DAB_BOX_SIZE + DAB_OFFSET * 2;
-dabCanvas.height = (DAB_GRID_SIZE - 1) * DAB_BOX_SIZE + DAB_OFFSET * 2;
-
-dabBoard = {
-lines: Array.from({
-length: DAB_GRID_SIZE
-}, () => Array.from({
-length: DAB_GRID_SIZE
-}, () => ({
-h: false,
-v: false
-}))),
-boxes: Array.from({
-length: DAB_GRID_SIZE - 1
-}, () => Array(DAB_GRID_SIZE - 1).fill(0)),
-player1Score: 0,
-player2Score: 0
-};
-
-currentPlayer = 1;
-dabGameActive = true;
-updateDotsAndBoxesStatus();
-drawDABBoard();
-
-dabCanvas.addEventListener('click', handleDABClick);
-}
-
-function updateDotsAndBoxesStatus() {
-setPlayerTurnColor(currentPlayer);
-document.getElementById('dabStatus').textContent = `Player ${currentPlayer}'s Turn | Player 1: ${dabBoard.player1Score} | Player 2: ${dabBoard.player2Score}`;
-}
-
-function drawDABBoard() {
-dabCtx.clearRect(0, 0, dabCanvas.width, dabCanvas.height);
-
-// Draw dots
-dabCtx.fillStyle = '#333';
-for (let i = 0; i < DAB_GRID_SIZE; i++) {
-for (let j = 0; j < DAB_GRID_SIZE; j++) {
-dabCtx.beginPath();
-dabCtx.arc(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE, 3, 0, Math.PI * 2);
-dabCtx.fill();
-}
-}
-
-// Draw lines
-dabCtx.strokeStyle = '#333';
-dabCtx.lineWidth = 2;
-for (let i = 0; i < DAB_GRID_SIZE; i++) {
-for (let j = 0; j < DAB_GRID_SIZE; j++) {
-if (dabBoard.lines[i][j].h) {
-dabCtx.beginPath();
-dabCtx.moveTo(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE);
-dabCtx.lineTo(DAB_OFFSET + (j + 1) * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE);
-dabCtx.stroke();
-}
-if (dabBoard.lines[i][j].v) {
-dabCtx.beginPath();
-dabCtx.moveTo(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + i * DAB_BOX_SIZE);
-dabCtx.lineTo(DAB_OFFSET + j * DAB_BOX_SIZE, DAB_OFFSET + (i + 1) * DAB_BOX_SIZE);
-dabCtx.stroke();
-}
-}
-}
-
-// Draw filled boxes
-for (let i = 0; i < DAB_GRID_SIZE - 1; i++) {
-for (let j = 0; j < DAB_GRID_SIZE - 1; j++) {
-if (dabBoard.boxes[i][j] !== 0) {
-dabCtx.fillStyle = dabBoard.boxes[i][j] === 1 ? 'rgba(253, 224, 71, 0.5)' : 'rgba(234, 88, 12, 0.5)';
-dabCtx.fillRect(DAB_OFFSET + j * DAB_BOX_SIZE + 2, DAB_OFFSET + i * DAB_BOX_SIZE + 2, DAB_BOX_SIZE - 4, DAB_BOX_SIZE - 4);
-}
-}
-}
-}
-
-function handleDABClick(event) {
-if (!dabGameActive) return;
-
-const rect = dabCanvas.getBoundingClientRect();
-const x = event.clientX - rect.left;
-const y = event.clientY - rect.top;
-
-let lineClicked = false;
-let nextPlayer = currentPlayer;
-
-for (let i = 0; i < DAB_GRID_SIZE; i++) {
-for (let j = 0; j < DAB_GRID_SIZE; j++) {
-const dotX = DAB_OFFSET + j * DAB_BOX_SIZE;
-const dotY = DAB_OFFSET + i * DAB_BOX_SIZE;
-
-// Check horizontal line
-if (i < DAB_GRID_SIZE && x > dotX - DAB_CLICK_TOLERANCE && x < dotX + DAB_BOX_SIZE + DAB_CLICK_TOLERANCE && Math.abs(y - dotY) < DAB_CLICK_TOLERANCE && !dabBoard.lines[i][j].h) {
-dabBoard.lines[i][j].h = true;
-if (!checkDABCompletion(i, j, 'h')) {
-nextPlayer = currentPlayer === 1 ? 2 : 1;
-}
-lineClicked = true;
-break;
-}
-// Check vertical line
-if (j < DAB_GRID_SIZE && y > dotY - DAB_CLICK_TOLERANCE && y < dotY + DAB_BOX_SIZE + DAB_CLICK_TOLERANCE && Math.abs(x - dotX) < DAB_CLICK_TOLERANCE && !dabBoard.lines[i][j].v) {
-dabBoard.lines[i][j].v = true;
-if (!checkDABCompletion(i, j, 'v')) {
-nextPlayer = currentPlayer === 1 ? 2 : 1;
-}
-lineClicked = true;
-break;
-}
-}
-if (lineClicked) break;
-}
-
-if (lineClicked) {
-currentPlayer = nextPlayer;
-drawDABBoard();
-updateDotsAndBoxesStatus();
-}
-
-let totalBoxes = (DAB_GRID_SIZE - 1) * (DAB_GRID_SIZE - 1);
-if (dabBoard.player1Score + dabBoard.player2Score === totalBoxes) {
-endDABGame();
-}
-}
-
-function checkDABCompletion(row, col, orientation) {
-let boxCompleted = false;
-
-// Check horizontal line completion
-if (orientation === 'h') {
-if (row > 0 && dabBoard.lines[row-1][col].h && dabBoard.lines[row][col].v && dabBoard.lines[row-1][col+1].v && dabBoard.boxes[row-1][col] === 0) {
-dabBoard.boxes[row-1][col] = currentPlayer;
-dabBoard[`player${currentPlayer}Score`]++;
-boxCompleted = true;
-}
-if (row < DAB_GRID_SIZE-1 && dabBoard.lines[row+1][col].h && dabBoard.lines[row][col].v && dabBoard.lines[row][col+1].v && dabBoard.boxes[row][col] === 0) {
-dabBoard.boxes[row][col] = currentPlayer;
-dabBoard[`player${currentPlayer}Score`]++;
-boxCompleted = true;
-}
-} 
-
-// Check vertical line completion
-else if (orientation === 'v') {
-if (col > 0 && dabBoard.lines[row][col-1].v && dabBoard.lines[row][col].h && dabBoard.lines[row+1][col-1].h && dabBoard.boxes[row][col-1] === 0) {
-dabBoard.boxes[row][col-1] = currentPlayer;
-dabBoard[`player${currentPlayer}Score`]++;
-boxCompleted = true;
-}
-if (col < DAB_GRID_SIZE-1 && dabBoard.lines[row][col+1].v && dabBoard.lines[row][col].h && dabBoard.lines[row+1][col].h && dabBoard.boxes[row][col] === 0) {
-dabBoard.boxes[row][col] = currentPlayer;
-dabBoard[`player${currentPlayer}Score`]++;
-boxCompleted = true;
-}
-}
-
-return boxCompleted;
-}
-
-function endDABGame() {
-dabGameActive = false;
-let winnerMessage = '';
-if (dabBoard.player1Score > dabBoard.player2Score) {
-awardPoint(1);
-winnerMessage = 'Player 1 wins!';
-} else if (dabBoard.player2Score > dabBoard.player1Score) {
-awardPoint(2);
-winnerMessage = 'Player 2 wins!';
-} else {
-winnerMessage = 'It\'s a tie!';
-}
-showAlert(winnerMessage, 3000, goHome);
-}
-
-function resetDotsAndBoxes() {
-initializeDotsAndBoxes();
-}
-
-
-// SNAKE DUEL
-const SD_WIDTH = 800;
-const SD_HEIGHT = 600;
-const SD_CELL_SIZE = 20;
-let snakeCanvas, snakeCtx;
-let snake1, snake2, food;
-let snakeDirection1, snakeDirection2;
-let snakeGameActive = false;
-let snakeKeys = {};
-
-let control1 = {x: 70, y: 70, radius: 50};
-let control2 = {x: SD_WIDTH - 70, y: SD_HEIGHT - 70, radius: 50};
-let isDragging1 = false;
-let isDragging2 = false;
-
-function initializeSnakeDuel() {
-snakeCanvas = document.getElementById('snakeDuelCanvas');
-snakeCtx = snakeCanvas.getContext('2d');
-
-snake1 = [{ x: 40, y: 300 }];
-snake2 = [{ x: 740, y: 300 }];
-snakeDirection1 = 'right';
-snakeDirection2 = 'left';
-
-generateFood();
-
-document.getElementById('snakeStatus').textContent = `Player 1: Yellow | Player 2: Red-Orange`;
-
-window.addEventListener('keydown', handleSnakeKeyDown);
-snakeCanvas.addEventListener('mousedown', handleMouseDown);
-snakeCanvas.addEventListener('mousemove', handleMouseMove);
-snakeCanvas.addEventListener('mouseup', handleMouseUp);
-
-snakeCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-snakeCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-snakeCanvas.addEventListener('touchend', handleTouchEnd);
-
-snakeGameActive = true;
-if (!snakeAnimationFrameId) {
-gameLoopSnake();
-}
-}
-
-function handleMouseDown(e) {
-const rect = snakeCanvas.getBoundingClientRect();
-const x = e.clientX - rect.left;
-const y = e.clientY - rect.top;
-
-const dist1 = Math.sqrt(Math.pow(x - control1.x, 2) + Math.pow(y - control1.y, 2));
-const dist2 = Math.sqrt(Math.pow(x - control2.x, 2) + Math.pow(y - control2.y, 2));
-
-if (dist1 < control1.radius) {
-isDragging1 = true;
-} else if (dist2 < control2.radius) {
-isDragging2 = true;
-}
-}
-
-function handleMouseMove(e) {
-if (!isDragging1 && !isDragging2) return;
-const rect = snakeCanvas.getBoundingClientRect();
-const x = e.clientX - rect.left;
-const y = e.clientY - rect.top;
-
-if (isDragging1) {
-let dx = x - control1.x;
-let dy = y - control1.y;
-if (Math.abs(dx) > Math.abs(dy)) {
-if (dx > 0) snakeDirection1 = 'right';
-else snakeDirection1 = 'left';
-} else {
-if (dy > 0) snakeDirection1 = 'down';
-else snakeDirection1 = 'up';
-}
-} else if (isDragging2) {
-let dx = x - control2.x;
-let dy = y - control2.y;
-if (Math.abs(dx) > Math.abs(dy)) {
-if (dx > 0) snakeDirection2 = 'right';
-else snakeDirection2 = 'left';
-} else {
-if (dy > 0) snakeDirection2 = 'down';
-else snakeDirection2 = 'up';
-}
-}
-}
-
-function handleMouseUp() {
-isDragging1 = false;
-isDragging2 = false;
-}
-
-function handleTouchStart(e) {
-e.preventDefault();
-const rect = snakeCanvas.getBoundingClientRect();
-const touch1 = e.touches[0];
-const x1 = touch1.clientX - rect.left;
-const y1 = touch1.clientY - rect.top;
-
-const dist1 = Math.sqrt(Math.pow(x1 - control1.x, 2) + Math.pow(y1 - control1.y, 2));
-const dist2 = Math.sqrt(Math.pow(x1 - control2.x, 2) + Math.pow(y1 - control2.y, 2));
-
-if (dist1 < control1.radius) {
-isDragging1 = true;
-} else if (dist2 < control2.radius) {
-isDragging2 = true;
-}
-}
-
-function handleTouchMove(e) {
-e.preventDefault();
-if (!isDragging1 && !isDragging2) return;
-const rect = snakeCanvas.getBoundingClientRect();
-const touch1 = e.touches[0];
-const x1 = touch1.clientX - rect.left;
-const y1 = touch1.clientY - rect.top;
-
-if (isDragging1) {
-let dx = x1 - control1.x;
-let dy = y1 - control1.y;
-if (Math.abs(dx) > Math.abs(dy)) {
-if (dx > 0) snakeDirection1 = 'right';
-else snakeDirection1 = 'left';
-} else {
-if (dy > 0) snakeDirection1 = 'down';
-else snakeDirection1 = 'up';
-}
-} else if (isDragging2) {
-let dx = x1 - control2.x;
-let dy = y1 - control2.y;
-if (Math.abs(dx) > Math.abs(dy)) {
-if (dx > 0) snakeDirection2 = 'right';
-else snakeDirection2 = 'left';
-} else {
-if (dy > 0) snakeDirection2 = 'down';
-else snakeDirection2 = 'up';
-}
-}
-}
-
-function handleTouchEnd() {
-isDragging1 = false;
-isDragging2 = false;
-}
-
-
-function handleSnakeKeyDown(e) {
-if (!snakeGameActive) return;
-const key = e.key.toLowerCase();
-
-// Player 1 controls
-if (key === 'w' && snakeDirection1 !== 'down') snakeDirection1 = 'up';
-else if (key === 'a' && snakeDirection1 !== 'right') snakeDirection1 = 'left';
-else if (key === 's' && snakeDirection1 !== 'up') snakeDirection1 = 'down';
-else if (key === 'd' && snakeDirection1 !== 'left') snakeDirection1 = 'right';
-
-// Player 2 controls
-if (key === 'arrowup' && snakeDirection2 !== 'down') snakeDirection2 = 'up';
-else if (key === 'arrowleft' && snakeDirection2 !== 'right') snakeDirection2 = 'left';
-else if (key === 'arrowdown' && snakeDirection2 !== 'up') snakeDirection2 = 'down';
-else if (key === 'arrowright' && snakeDirection2 !== 'left') snakeDirection2 = 'right';
-}
-
-function generateFood() {
-food = {
-x: Math.floor(Math.random() * (SD_WIDTH / SD_CELL_SIZE)) * SD_CELL_SIZE,
-y: Math.floor(Math.random() * (SD_HEIGHT / SD_CELL_SIZE)) * SD_CELL_SIZE,
-};
-}
-
-function drawSnake(snake, color) {
-snake.forEach(segment => {
-snakeCtx.fillStyle = color;
-snakeCtx.fillRect(segment.x, segment.y, SD_CELL_SIZE, SD_CELL_SIZE);
-});
-}
-
-function drawControls() {
-snakeCtx.beginPath();
-snakeCtx.arc(control1.x, control1.y, control1.radius, 0, Math.PI * 2);
-snakeCtx.strokeStyle = '#fde047';
-snakeCtx.lineWidth = 4;
-snakeCtx.stroke();
-
-snakeCtx.beginPath();
-snakeCtx.arc(control2.x, control2.y, control2.radius, 0, Math.PI * 2);
-snakeCtx.strokeStyle = '#ea580c';
-snakeCtx.lineWidth = 4;
-snakeCtx.stroke();
-}
-
-function updateSnake() {
-// Update Player 1 snake
-const head1 = { x: snake1[0].x, y: snake1[0].y };
-if (snakeDirection1 === 'up') head1.y -= SD_CELL_SIZE;
-else if (snakeDirection1 === 'down') head1.y += SD_CELL_SIZE;
-else if (snakeDirection1 === 'left') head1.x -= SD_CELL_SIZE;
-else if (snakeDirection1 === 'right') head1.x += SD_CELL_SIZE;
-snake1.unshift(head1);
-
-// Update Player 2 snake
-const head2 = { x: snake2[0].x, y: snake2[0].y };
-if (snakeDirection2 === 'up') head2.y -= SD_CELL_SIZE;
-else if (snakeDirection2 === 'down') head2.y += SD_CELL_SIZE;
-else if (snakeDirection2 === 'left') head2.x -= SD_CELL_SIZE;
-else if (snakeDirection2 === 'right') head2.x += SD_CELL_SIZE;
-snake2.unshift(head2);
-
-// Check for food
-if (head1.x === food.x && head1.y === food.y) {
-generateFood();
-} else {
-snake1.pop();
-}
-
-if (head2.x === food.x && head2.y === food.y) {
-generateFood();
-} else {
-snake2.pop();
-}
-
-// Check for collisions
-const p1Lost = checkSnakeCollision(head1, snake1, snake2);
-const p2Lost = checkSnakeCollision(head2, snake2, snake1);
-
-if (p1Lost && p2Lost) {
-showAlert('Draw! 🤝', 2000, goHome);
-snakeGameActive = false;
-} else if (p1Lost) {
-awardPoint(2);
-showAlert('Player 2 Wins! 🎉', 3000, goHome);
-snakeGameActive = false;
-} else if (p2Lost) {
-awardPoint(1);
-showAlert('Player 1 Wins! 🎉', 3000, goHome);
-snakeGameActive = false;
-}
-}
-
-function checkSnakeCollision(head, snake, otherSnake) {
-// Wall collision
-if (head.x < 0 || head.x >= SD_WIDTH || head.y < 0 || head.y >= SD_HEIGHT) {
-return true;
-}
-// Self-collision
-for (let i = 1; i < snake.length; i++) {
-if (head.x === snake[i].x && head.y === snake[i].y) {
-return true;
-}
-}
-// Opponent collision
-for (let i = 0; i < otherSnake.length; i++) {
-if (head.x === otherSnake[i].x && head.y === otherSnake[i].y) {
-return true;
-}
-}
-return false;
-}
-
-function drawSnakeGame() {
-snakeCtx.clearRect(0, 0, SD_WIDTH, SD_HEIGHT);
-
-drawSnake(snake1, '#fde047'); // Player 1
-drawSnake(snake2, '#ea580c'); // Player 2
-
-snakeCtx.fillStyle = '#fff';
-snakeCtx.fillRect(food.x, food.y, SD_CELL_SIZE, SD_CELL_SIZE);
-
-drawControls();
-}
-
-function gameLoopSnake() {
-if (!snakeGameActive) {
-return;
-}
-updateSnake();
-drawSnakeGame();
-snakeAnimationFrameId = setTimeout(() => {
-requestAnimationFrame(gameLoopSnake);
-}, 100);
-}
-
-function resetSnakeDuel() {
-if (snakeAnimationFrameId) {
-cancelAnimationFrame(snakeAnimationFrameId);
-snakeAnimationFrameId = null;
-}
-initializeSnakeDuel();
-}
-
-// ROCK PAPER SCISSORS
-const rpsChoices = {
-rock: '🪨',
-paper: '📄',
-scissors: '✂️'
-};
-
-let rpsRound = 1;
-let rpsMaxRounds = 1;
-let player1Choice = null;
-let player2Choice = null;
-let rpsPlayer1Wins = 0;
-let rpsPlayer2Wins = 0;
-
-function initializeRPS() {
-rpsRound = 1;
-player1Choice = null;
-player2Choice = null;
-rpsPlayer1Wins = 0;
-rpsPlayer2Wins = 0;
-updateRPSStatus();
-
-document.getElementById('player1Choice').textContent = '?';
-document.getElementById('player2Choice').textContent = '?';
-document.getElementById('roundResult').textContent = 'Make your choices!';
-document.getElementById('rpsNextBtn').classList.add('hidden');
-
-document.querySelectorAll('.rps-btn').forEach(btn => btn.disabled = false);
-}
-
-function updateRPSStatus() {
-setPlayerTurnColor(currentPlayer);
-document.getElementById('rpsStatus').textContent = 'Single Round Showdown';
-}
-
-function makeChoice(player, choice) {
-if (player === 1) {
-player1Choice = choice;
-document.getElementById('player1Choice').textContent = rpsChoices[choice];
-} else {
-player2Choice = choice;
-document.getElementById('player2Choice').textContent = rpsChoices[choice];
-}
-
-const playerButtons = document.querySelectorAll(`.player-choice:nth-child(${player === 1 ? 1 : 3}) .rps-btn`);
-playerButtons.forEach(btn => btn.disabled = true);
-
-if (player1Choice && player2Choice) {
-setTimeout(evaluateRound, 1000);
-}
-}
-
-function evaluateRound() {
-let result = '';
-let winner = null;
-
-if (player1Choice === player2Choice) {
-result = "It's a tie!";
-showAlert(result, 3000, initializeRPS); // Restart on tie
-} else if (
-(player1Choice === 'rock' && player2Choice === 'scissors') ||
-(player1Choice === 'paper' && player2Choice === 'rock') ||
-(player1Choice === 'scissors' && player2Choice === 'paper')
-) {
-result = 'Player 1 wins!';
-winner = 1;
-awardPoint(winner);
-showAlert(`PLAYER ${winner} WINS! 🎉`, 3000, goHome);
-} else {
-result = 'Player 2 wins!';
-winner = 2;
-awardPoint(winner);
-showAlert(`PLAYER ${winner} WINS! 🎉`, 3000, goHome);
-}
-
-document.getElementById('roundResult').textContent = result;
-document.getElementById('rpsNextBtn').classList.remove('hidden');
-
-}
-
-function nextRPSRound() {
-rpsRound++;
-player1Choice = null;
-player2Choice = null;
-updateRPSStatus();
-
-document.getElementById('player1Choice').textContent = '?';
-document.getElementById('player2Choice').textContent = '?';
-document.getElementById('roundResult').textContent = 'Make your choices!';
-document.getElementById('rpsNextBtn').classList.add('hidden');
-
-document.querySelectorAll('.rps-btn').forEach(btn => btn.disabled = false);
-}
-
-function resetRPS() {
-initializeRPS();
-}
-
-// DRAW & GUESS
-const drawPrompts = ['ROBOT', 'SPACESHIP', 'PIXEL', 'ARCADE', 'NEON', 'CYBER', 'MATRIX', 'DIGITAL'];
-let canvas, ctx;
-let isDrawing = false;
-let currentColor = '#000000';
-let currentLineWidth = 4;
-
-function initializeDrawGuess() {
-canvas = document.getElementById('drawCanvas');
-ctx = canvas.getContext('2d');
-
-canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('mouseout', stopDrawing);
-
-// Touch events
-canvas.addEventListener('touchstart', handleTouch);
-canvas.addEventListener('touchmove', handleTouch);
-canvas.addEventListener('touchend', stopDrawing);
-
-ctx.lineWidth = currentLineWidth;
-ctx.lineCap = 'round';
-ctx.strokeStyle = currentColor;
-
-newDrawPrompt();
-}
-
-function startDrawing(e) {
-isDrawing = true;
-const rect = canvas.getBoundingClientRect();
-ctx.beginPath();
-ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-}
-
-function draw(e) {
-if (!isDrawing) return;
-const rect = canvas.getBoundingClientRect();
-ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-ctx.stroke();
-}
-
-function stopDrawing() {
-isDrawing = false;
-}
-
-function handleTouch(e) {
-e.preventDefault();
-const touch = e.touches[0];
-const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' :
-e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
-clientX: touch.clientX,
-clientY: touch.clientY
-});
-canvas.dispatchEvent(mouseEvent);
-}
-
-function clearCanvas() {
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function setDrawColor(color, lineWidth) {
-currentColor = color;
-currentLineWidth = lineWidth;
-ctx.strokeStyle = currentColor;
-ctx.lineWidth = currentLineWidth;
-}
-
-function newDrawPrompt() {
-const prompt = drawPrompts[Math.floor(Math.random() * drawPrompts.length)];
-document.getElementById('drawPrompt').textContent = `Draw: ${prompt}`;
-clearCanvas();
-}
-
-function nextDrawRound() {
-currentPlayer = currentPlayer === 1 ? 2 : 1;
-document.getElementById('drawStatus').textContent = `Player ${currentPlayer}'s Turn to Draw`;
-newDrawPrompt();
-}
-
-function resetDrawGame() {
-currentPlayer = 1;
-document.getElementById('drawStatus').textContent = 'Player 1\'s Turn to Draw';
-newDrawPrompt();
-}
-
 // 2048 Game
 const GRID_SIZE = 4;
 let game2048Board;
@@ -1842,3 +1061,4 @@ updateScores();
 </body>
 
 </html>
+
