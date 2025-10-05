@@ -458,56 +458,56 @@ document.body.classList.add(player === 1 ? 'bg-player1' : 'bg-player2');
 
 // Navigation
 function showGame(gameId) {
-// Stop any ongoing game loops
-if (snakeAnimationFrameId) {
-cancelAnimationFrame(snakeAnimationFrameId);
-snakeAnimationFrameId = null;
-}
+  // Remove this block, since snakeAnimationFrameId is not used anymore
+  // if (snakeAnimationFrameId) {
+  //   cancelAnimationFrame(snakeAnimationFrameId);
+  //   snakeAnimationFrameId = null;
+  // }
 
-document.getElementById('homePage').classList.add('hidden');
-document.querySelectorAll('.game-page').forEach(page => page.classList.add('hidden'));
-document.getElementById(gameId).classList.remove('hidden');
-document.querySelector('.back-btn').classList.remove('hidden');
+  document.getElementById('homePage').classList.add('hidden');
+  document.querySelectorAll('.game-page').forEach(page => page.classList.add('hidden'));
+  document.getElementById(gameId).classList.remove('hidden');
+  document.querySelector('.back-btn').classList.remove('hidden');
 
-document.querySelector('.container').scrollIntoView({
-behavior: 'auto',
-block: 'start'
-});
+  document.querySelector('.container').scrollIntoView({
+    behavior: 'auto',
+    block: 'start'
+  });
 
-// Initialize specific games and set their backgrounds
-if (gameId === 'ticTacToe') {
-initializeTicTacToe();
-setPlayerTurnColor(currentPlayer);
-} else if (gameId === 'memoryGame') {
-initializeMemoryGame();
-setPlayerTurnColor(currentPlayer);
-} else if (gameId === 'connectFour') {
-initializeConnectFour();
-setPlayerTurnColor(currentPlayer);
-} else if (gameId === 'rockPaperScissors') {
-initializeRPS();
-setPlayerTurnColor(currentPlayer);
-} else if (gameId === '2048Game') {
-initialize2048();
-document.body.classList.remove('bg-player1', 'bg-player2', 'bg-home');
-document.body.classList.add('bg-2048');
-}
+  // Initialize specific games and set their backgrounds
+  if (gameId === 'ticTacToe') {
+    initializeTicTacToe();
+    setPlayerTurnColor(currentPlayer);
+  } else if (gameId === 'memoryGame') {
+    initializeMemoryGame();
+    setPlayerTurnColor(currentPlayer);
+  } else if (gameId === 'connectFour') {
+    initializeConnectFour();
+    setPlayerTurnColor(currentPlayer);
+  } else if (gameId === 'rockPaperScissors') {
+    initializeRPS();
+    setPlayerTurnColor(currentPlayer);
+  } else if (gameId === '2048Game') {
+    initialize2048();
+    document.body.classList.remove('bg-player1', 'bg-player2', 'bg-home');
+    document.body.classList.add('bg-2048');
+  }
 }
 
 function goHome() {
-// Stop any ongoing game loops
-if (snakeAnimationFrameId) {
-cancelAnimationFrame(snakeAnimationFrameId);
-snakeAnimationFrameId = null;
-}
-if (window.remove2048Listeners) {
-window.remove2048Listeners();
-}
-document.querySelectorAll('.game-page').forEach(page => page.classList.add('hidden'));
-document.getElementById('homePage').classList.remove('hidden');
-document.querySelector('.back-btn').classList.add('hidden');
-document.body.classList.remove('bg-player1', 'bg-player2', 'bg-2048');
-document.body.classList.add('bg-home');
+  // Remove this block, since snakeAnimationFrameId is not used anymore
+  // if (snakeAnimationFrameId) {
+  //   cancelAnimationFrame(snakeAnimationFrameId);
+  //   snakeAnimationFrameId = null;
+  // }
+  if (window.remove2048Listeners) {
+    window.remove2048Listeners();
+  }
+  document.querySelectorAll('.game-page').forEach(page => page.classList.add('hidden'));
+  document.getElementById('homePage').classList.remove('hidden');
+  document.querySelector('.back-btn').classList.add('hidden');
+  document.body.classList.remove('bg-player1', 'bg-player2', 'bg-2048');
+  document.body.classList.add('bg-home');
 }
 
 function updateScores() {
@@ -605,6 +605,65 @@ pattern.every(index => tttBoard[index] === symbol)
 
 function resetTicTacToe() {
 initializeTicTacToe();
+}
+
+// ROCK PAPER SCISSORS
+let rpsChoices = [null, null]; // [Player 1, Player 2]
+let rpsGameActive = true;
+
+function initializeRPS() {
+  rpsChoices = [null, null];
+  rpsGameActive = true;
+  document.getElementById('player1Choice').textContent = '?';
+  document.getElementById('player2Choice').textContent = '?';
+  document.getElementById('roundResult').textContent = 'Make your choices!';
+  document.getElementById('rpsNextBtn').classList.add('hidden');
+}
+
+function makeChoice(player, choice) {
+  if (!rpsGameActive) return;
+  rpsChoices[player - 1] = choice;
+  document.getElementById(`player${player}Choice`).textContent =
+    choice === 'rock' ? '🪨' : choice === 'paper' ? '📄' : '✂️';
+
+  if (rpsChoices[0] && rpsChoices[1]) {
+    rpsGameActive = false;
+    const winner = getRPSWinner(rpsChoices[0], rpsChoices[1]);
+    let resultText = '';
+    if (winner === 0) {
+      showAlert("It's a draw! 🤝", 2000, nextRPSRound);
+      resultText = "It's a draw! 🤝";
+    } else {
+      awardPoint(winner);
+      showAlert(`Player ${winner} wins! 🎉`, 2000, nextRPSRound);
+      resultText = `Player ${winner} wins! 🎉`;
+    }
+    document.getElementById('roundResult').textContent = resultText;
+    document.getElementById('rpsNextBtn').classList.remove('hidden');
+  }
+}
+
+function getRPSWinner(choice1, choice2) {
+  if (choice1 === choice2) return 0;
+  if (
+    (choice1 === 'rock' && choice2 === 'scissors') ||
+    (choice1 === 'paper' && choice2 === 'rock') ||
+    (choice1 === 'scissors' && choice2 === 'paper')
+  ) {
+    return 1;
+  }
+  return 2;
+}
+
+function nextRPSRound() {
+  initializeRPS();
+}
+
+function resetRPS() {
+  initializeRPS();
+  player1Score = 0;
+  player2Score = 0;
+  updateScores();
 }
 
 // MEMORY GAME
